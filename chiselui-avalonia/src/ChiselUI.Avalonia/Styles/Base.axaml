@@ -1,0 +1,105 @@
+<!-- Typography, ToolTip, ScrollBar / ScrollViewer -->
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Styles.Resources>
+
+  <!-- ===== ScrollBar: classic 13px, concave well track, gel pill thumb (web ::-webkit-scrollbar) ===== -->
+  <ControlTheme x:Key="ChScrollPage" TargetType="RepeatButton">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template"><ControlTemplate><Border Background="{TemplateBinding Background}"/></ControlTemplate></Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="ChScrollThumb" TargetType="Thumb">
+    <Setter Property="Background" Value="{DynamicResource ChScrollThumbBrush}"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Margin="2" Background="{TemplateBinding Background}" CornerRadius="999"/>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover, ^:pressed"><Setter Property="Background" Value="{DynamicResource ChScrollThumbHoverBrush}"/></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="ChScrollThumbH" TargetType="Thumb" BasedOn="{StaticResource ChScrollThumb}">
+    <Setter Property="Background" Value="{DynamicResource ChScrollThumbHBrush}"/>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type ScrollBar}" TargetType="ScrollBar">
+    <Setter Property="Background" Value="{DynamicResource ChSurfaceWellBrush}"/>
+    <Setter Property="Cursor" Value="Arrow"/>
+    <Style Selector="^:vertical">
+      <Setter Property="Width" Value="13"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border x:Name="PART_Track" Background="{TemplateBinding Background}" BoxShadow="{DynamicResource ChScrollTrackShadow}">
+            <Track Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value, Mode=TwoWay}"
+                   DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                   ViewportSize="{TemplateBinding ViewportSize}" Orientation="{TemplateBinding Orientation}" IsDirectionReversed="True">
+              <Track.DecreaseButton><RepeatButton Name="PART_PageUpButton" Theme="{StaticResource ChScrollPage}"/></Track.DecreaseButton>
+              <Track.IncreaseButton><RepeatButton Name="PART_PageDownButton" Theme="{StaticResource ChScrollPage}"/></Track.IncreaseButton>
+              <Thumb Theme="{StaticResource ChScrollThumb}" MinHeight="24"/>
+            </Track>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="^:horizontal">
+      <Setter Property="Height" Value="13"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border x:Name="PART_Track" Background="{TemplateBinding Background}" BoxShadow="{DynamicResource ChScrollTrackHShadow}">
+            <Track Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value, Mode=TwoWay}"
+                   DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                   ViewportSize="{TemplateBinding ViewportSize}" Orientation="{TemplateBinding Orientation}">
+              <Track.DecreaseButton><RepeatButton Name="PART_PageUpButton" Theme="{StaticResource ChScrollPage}"/></Track.DecreaseButton>
+              <Track.IncreaseButton><RepeatButton Name="PART_PageDownButton" Theme="{StaticResource ChScrollPage}"/></Track.IncreaseButton>
+              <Thumb Theme="{StaticResource ChScrollThumbH}" MinWidth="24"/>
+            </Track>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+  </ControlTheme>
+
+</Styles.Resources>
+
+  <!-- ===== Top level typography ===== -->
+  <Style Selector=":is(TopLevel)">
+    <Setter Property="FontFamily" Value="{DynamicResource ChFontSans}"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+  </Style>
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource ChSurfaceBaseBrush}"/>
+  </Style>
+  <Style Selector="ScrollViewer /template/ Panel#PART_ScrollBarsSeparator"><Setter Property="Background" Value="{DynamicResource ChSurfaceWellBrush}"/></Style>
+
+  <Style Selector="TextBlock.h1"><Setter Property="FontSize" Value="26"/><Setter Property="FontWeight" Value="Bold"/><Setter Property="LetterSpacing" Value="-0.3"/></Style>
+  <Style Selector="TextBlock.h2"><Setter Property="FontSize" Value="20"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+  <Style Selector="TextBlock.h3"><Setter Property="FontSize" Value="14"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+  <Style Selector="TextBlock.secondary"><Setter Property="Foreground" Value="{DynamicResource ChTextSecondaryBrush}"/></Style>
+  <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="{DynamicResource ChTextMutedBrush}"/></Style>
+  <Style Selector="TextBlock.accent"><Setter Property="Foreground" Value="{DynamicResource ChAccentTextBrush}"/></Style>
+  <Style Selector="TextBlock.sm"><Setter Property="FontSize" Value="12"/></Style>
+  <Style Selector="TextBlock.xs"><Setter Property="FontSize" Value="11"/></Style>
+  <Style Selector="TextBlock.mono"><Setter Property="FontFamily" Value="{DynamicResource ChFontMono}"/><Setter Property="FontSize" Value="12"/></Style>
+  <Style Selector="TextBlock.eyebrow"><Setter Property="FontSize" Value="11"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="LetterSpacing" Value="0.6"/><Setter Property="Foreground" Value="{DynamicResource ChTextMutedBrush}"/></Style>
+  <Style Selector="TextBlock.desktop"><Setter Property="Foreground" Value="{DynamicResource ChDesktopTextBrush}"/></Style>
+  <Style Selector="TextBlock.glass"><Setter Property="Foreground" Value="{DynamicResource ChGlassTextBrush}"/></Style>
+  <Style Selector="TextBlock.success"><Setter Property="Foreground" Value="{DynamicResource ChSuccessBrush}"/></Style>
+  <Style Selector="TextBlock.danger"><Setter Property="Foreground" Value="{DynamicResource ChDangerBrush}"/></Style>
+
+  <!-- ===== ToolTip: warm note at elevation 5 (margin leaves room for the drop shadow) ===== -->
+  <Style Selector="ToolTip">
+    <Setter Property="Background" Value="{DynamicResource ChTooltipBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTooltipTextBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="9,5"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="MaxWidth" Value="300"/>
+    <Setter Property="Margin" Value="0"/>
+  </Style>
+  <Style Selector="ToolTip /template/ Border#PART_LayoutRoot">
+    <Setter Property="BoxShadow" Value="{DynamicResource ChTooltipShadow}"/>
+    <Setter Property="Margin" Value="8,2,8,16"/>
+  </Style>
+</Styles>

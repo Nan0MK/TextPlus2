@@ -1,0 +1,46 @@
+<c:ChiselWindow xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:c="using:ChiselUI.Avalonia.Controls"
+                xmlns:local="using:ChiselUI.Demo"
+                x:Class="ChiselUI.Demo.MainWindow"
+                Title="ChiselUI for Avalonia — demo"
+                Width="1360" Height="900" MinWidth="900" MinHeight="600"
+                WindowStartupLocation="CenterScreen">
+  <c:ChiselWindow.IconContent>
+    <Ellipse Width="14" Height="14" Fill="{DynamicResource ChAccentGelVBrush}"/>
+  </c:ChiselWindow.IconContent>
+  <DockPanel>
+    <!-- top bar: same on every screen (page switcher, accent swatches, light/dark) -->
+    <Border x:Name="TopBar" DockPanel.Dock="Top" Classes="chrome" Height="36" Padding="10,0">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Ellipse Width="16" Height="16" Fill="{DynamicResource ChAccentGelVBrush}"/>
+          <TextBlock Text="ChiselUI" FontWeight="Bold" VerticalAlignment="Center"/>
+          <Border Classes="segmented" Margin="14,0,0,0">
+            <StackPanel Orientation="Horizontal" Spacing="2">
+              <ToggleButton x:Name="TabShowcase" Classes="segment" Content="Showcase" IsChecked="True" Click="OnShowcase"/>
+              <ToggleButton x:Name="TabExplorer" Classes="segment" Content="Explorer" Click="OnExplorer"/>
+            </StackPanel>
+          </Border>
+          <Button Classes="sm" Content="Open explorer in a real window" Click="OnRealExplorer" Margin="8,0,0,0"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <c:AccentPicker/>
+          <Button x:Name="ThemeButton" Classes="sm" Click="OnToggleTheme" MinWidth="70">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Path x:Name="ThemeGlyph" Width="11" Height="11" Stretch="Uniform" Fill="{DynamicResource ChTextBrush}"
+                    Data="M6,0 A6,6 0 1 0 12,7 A4.6,4.6 0 1 1 6,0 Z"/>
+              <TextBlock x:Name="ThemeLabel" Text="Dark"/>
+            </StackPanel>
+          </Button>
+          <TextBlock x:Name="Clock" Classes="secondary sm" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Panel/>
+      </DockPanel>
+    </Border>
+    <Panel>
+      <local:ShowcaseView x:Name="Showcase"/>
+      <local:ExplorerDesktop x:Name="Explorer" IsVisible="False"/>
+    </Panel>
+  </DockPanel>
+</c:ChiselWindow>

@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:ChiselUI.Avalonia.Controls"
+             xmlns:local="using:ChiselUI.Demo"
+             x:Class="ChiselUI.Demo.ExplorerDesktop">
+  <c:AuroraBackground>
+    <Panel>
+      <c:GlassFrame x:Name="ExplorerFrame" Title="Documents" Margin="20,22,20,20" MaxWidth="1080" HorizontalAlignment="Left">
+        <c:GlassFrame.Icon><local:DemoIcon Kind="library" Size="14"/></c:GlassFrame.Icon>
+        <local:ExplorerView x:Name="View"/>
+      </c:GlassFrame>
+      <c:GlassFrame x:Name="CopyDialog" IsDialog="True" Title="Copying 3 items (612 MB)" ShowMinMax="True"
+                    Width="390" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,24,64">
+        <StackPanel Margin="12,10,12,12" Spacing="8">
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+            <local:DemoIcon Kind="copyjob" Size="36" VerticalAlignment="Top"/>
+            <StackPanel Grid.Column="1" Spacing="3">
+              <TextBlock TextWrapping="Wrap" FontSize="13"><Run Text="Copying 3 items to "/><Run Text="Backup (E:)" FontWeight="SemiBold"/></TextBlock>
+              <TextBlock Classes="secondary sm" TextWrapping="Wrap"><Run Text="from "/><Run Text="Documents" Foreground="{DynamicResource ChAccentTextBrush}"/><Run Text=" · About 20 seconds remaining"/></TextBlock>
+            </StackPanel>
+          </Grid>
+          <ProgressBar Value="64" Height="12"/>
+          <DockPanel>
+            <TextBlock DockPanel.Dock="Right" Classes="secondary xs" Text="392 of 612 MB · 48.2 MB/s"/>
+            <TextBlock Classes="xs" Text="site-backup.zip"/>
+          </DockPanel>
+          <DockPanel Margin="0,2,0,0">
+            <Button DockPanel.Dock="Left" Classes="sm" Content="More details"/>
+            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+              <Button Classes="sm" Content="Pause"/>
+              <Button Classes="sm" Content="Cancel"/>
+            </StackPanel>
+          </DockPanel>
+        </StackPanel>
+      </c:GlassFrame>
+    </Panel>
+  </c:AuroraBackground>
+</UserControl>

@@ -1,0 +1,411 @@
+<!-- TabControl/TabItem, ListBox, TreeView, Menu/ContextMenu, Expander, Separator, DataGrid -->
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:ChiselUI.Avalonia.Controls">
+<Styles.Resources>
+
+  <!-- ===== TabControl: property-sheet style (raised pills merging into a raised sheet). Class "doc" = IDE document tabs ===== -->
+  <ControlTheme x:Key="{x:Type TabControl}" TargetType="TabControl">
+    <Setter Property="Padding" Value="14"/>
+    <Setter Property="Background" Value="{DynamicResource ChSurfacePanelBrush}"/>
+    <Setter Property="CornerRadius" Value="0,6,6,6"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="ItemsPanel"><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="3"/></ItemsPanelTemplate></Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="Auto,*">
+          <Border x:Name="PART_Strip" ZIndex="1" Height="30" Padding="0" ClipToBounds="False">
+            <Grid ColumnDefinitions="*,Auto">
+              <ItemsPresenter x:Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" VerticalAlignment="Bottom"/>
+            </Grid>
+          </Border>
+          <Border x:Name="PART_Sheet" Grid.Row="1" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{DynamicResource ChElev1}">
+            <ContentPresenter x:Name="PART_SelectedContentHost" Margin="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Content="{TemplateBinding SelectedContent}" ContentTemplate="{TemplateBinding SelectedContentTemplate}"/>
+          </Border>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.doc">
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="CornerRadius" Value="0"/>
+      <Setter Property="Background" Value="{DynamicResource ChEditorBrush}"/>
+    </Style>
+    <Style Selector="^.doc /template/ Border#PART_Strip">
+      <Setter Property="Background" Value="{DynamicResource ChChromeBrush}"/>
+      <Setter Property="BoxShadow" Value="{DynamicResource ChHeaderShadow}"/>
+      <Setter Property="Padding" Value="6,0"/>
+    </Style>
+    <Style Selector="^.doc /template/ Border#PART_Sheet"><Setter Property="BoxShadow" Value="none"/></Style>
+    <Style Selector="^.flush /template/ Border#PART_Sheet"><Setter Property="BoxShadow" Value="none"/><Setter Property="Background" Value="Transparent"/></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextSecondaryBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChChromeBrush}"/>
+    <Setter Property="Height" Value="27"/>
+    <Setter Property="Margin" Value="0,3,0,0"/>
+    <Setter Property="Padding" Value="14,0"/>
+    <Setter Property="CornerRadius" Value="7,7,0,0"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="VerticalAlignment" Value="Bottom"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_LayoutRoot" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                Padding="{TemplateBinding Padding}" BoxShadow="{DynamicResource ChSheetTabShadow}">
+          <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Foreground="{TemplateBinding Foreground}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/></Style>
+    <Style Selector="^:selected">
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Margin" Value="0"/>
+      <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Background" Value="{DynamicResource ChSurfacePanelBrush}"/>
+    </Style>
+    <Style Selector="^:selected /template/ Border#PART_LayoutRoot"><Setter Property="BoxShadow" Value="{DynamicResource ChSheetTabSelectedShadow}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  </ControlTheme>
+
+  <!-- ===== ListBox: concave well with selection-band rows ===== -->
+  <ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChDishLgFieldBrush}"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Padding" Value="3"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{DynamicResource ChElevSunken}">
+          <ScrollViewer x:Name="PART_ScrollViewer"
+                        HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                        VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+                        AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">
+            <ItemsPresenter x:Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="{TemplateBinding Padding}"/>
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.flat /template/ Border#border"><Setter Property="BoxShadow" Value="none"/></Style>
+    <Style Selector="^.flat"><Setter Property="Background" Value="Transparent"/></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Padding" Value="8,0"/>
+    <Setter Property="MinHeight" Value="22"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_Surface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" MinHeight="{TemplateBinding MinHeight}">
+          <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Padding="{TemplateBinding Padding}" Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#PART_Surface"><Setter Property="Background" Value="{DynamicResource ChHoverWashBrush}"/></Style>
+    <Style Selector="^:selected /template/ Border#PART_Surface"><Setter Property="Background" Value="{DynamicResource ChSelectBandBrush}"/><Setter Property="BoxShadow" Value="{DynamicResource ChSelectBand}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  </ControlTheme>
+
+  <!-- ===== TreeView ===== -->
+  <ControlTheme x:Key="{x:Type TreeView}" TargetType="TreeView">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_Surface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+          <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                        VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+            <ItemsPresenter x:Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" Margin="{TemplateBinding Padding}"/>
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.well"><Setter Property="Background" Value="{DynamicResource ChDishLgFieldBrush}"/><Setter Property="CornerRadius" Value="6"/></Style>
+    <Style Selector="^.well /template/ Border#PART_Surface"><Setter Property="BoxShadow" Value="{DynamicResource ChElevSunken}"/></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="ChTreeTwisty" TargetType="ToggleButton">
+    <Setter Property="Width" Value="12"/>
+    <Setter Property="Height" Value="12"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTextMutedBrush}"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Path x:Name="Arrow" Data="M0,0 L6,4 L0,8 Z" Fill="{TemplateBinding Foreground}" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="50%,50%">
+            <Path.Transitions><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12"/></Transitions></Path.Transitions>
+          </Path>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover"><Setter Property="Foreground" Value="{DynamicResource ChAccentBrush}"/></Style>
+    <Style Selector="^:checked /template/ Path#Arrow"><Setter Property="RenderTransform" Value="rotate(90deg)"/></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type TreeViewItem}" TargetType="TreeViewItem">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Padding" Value="2,0,6,0"/>
+    <Setter Property="MinHeight" Value="22"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel>
+          <Border x:Name="PART_LayoutRoot" Focusable="True" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}"
+                  MinHeight="{TemplateBinding MinHeight}" Padding="{TemplateBinding Padding}"
+                  Margin="{TemplateBinding Level, Converter={x:Static c:ChiselConverters.TreeIndent}}"
+                  TemplatedControl.IsTemplateFocusTarget="True">
+            <Grid x:Name="PART_Header" ColumnDefinitions="12,*">
+              <Panel x:Name="PART_ExpandCollapseChevronContainer">
+                <ToggleButton x:Name="PART_ExpandCollapseChevron" Theme="{StaticResource ChTreeTwisty}" Focusable="False"
+                              IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"/>
+              </Panel>
+              <ContentPresenter x:Name="PART_HeaderPresenter" Grid.Column="1" Margin="5,0,0,0" Focusable="False" VerticalAlignment="Center"
+                                Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                HorizontalContentAlignment="Stretch"/>
+            </Grid>
+          </Border>
+          <ItemsPresenter x:Name="PART_ItemsPresenter" IsVisible="{TemplateBinding IsExpanded}" ItemsPanel="{TemplateBinding ItemsPanel}"/>
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ Border#PART_LayoutRoot:pointerover"><Setter Property="Background" Value="{DynamicResource ChHoverWashBrush}"/></Style>
+    <Style Selector="^:selected /template/ Border#PART_LayoutRoot"><Setter Property="Background" Value="{DynamicResource ChSelectBandBrush}"/><Setter Property="BoxShadow" Value="{DynamicResource ChSelectBand}"/></Style>
+    <Style Selector="^:empty /template/ ToggleButton#PART_ExpandCollapseChevron"><Setter Property="IsVisible" Value="False"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  </ControlTheme>
+
+  <!-- ===== Expander: raised panel with a chrome header ===== -->
+  <ControlTheme x:Key="ChExpanderHeader" TargetType="ToggleButton">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChChromeBrush}"/>
+    <Setter Property="MinHeight" Value="28"/>
+    <Setter Property="Padding" Value="8,0,10,0"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_Surface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}"
+                MinHeight="{TemplateBinding MinHeight}" BoxShadow="{DynamicResource ChSheetTabShadow}">
+          <Grid ColumnDefinitions="14,*">
+            <Path x:Name="Arrow" Data="M0,0 L6,4 L0,8 Z" Fill="{DynamicResource ChTextMutedBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" RenderTransformOrigin="50%,50%">
+              <Path.Transitions><Transitions><TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.12"/></Transitions></Path.Transitions>
+            </Path>
+            <ContentPresenter x:Name="PART_ContentPresenter" Grid.Column="1" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#PART_Surface"><Setter Property="Background" Value="{DynamicResource ChChromeHoverBrush}"/></Style>
+    <Style Selector="^:pointerover /template/ Path#Arrow"><Setter Property="Fill" Value="{DynamicResource ChAccentBrush}"/></Style>
+    <Style Selector="^:checked /template/ Path#Arrow"><Setter Property="RenderTransform" Value="rotate(90deg)"/></Style>
+    <Style Selector="^:checked"><Setter Property="CornerRadius" Value="6,6,0,0"/></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type Expander}" TargetType="Expander">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChSurfaceRaisedBrush}"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Padding" Value="12,8,12,12"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_Root" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{DynamicResource ChElev1}">
+          <DockPanel>
+            <ToggleButton x:Name="ExpanderHeader" DockPanel.Dock="Top" Theme="{StaticResource ChExpanderHeader}"
+                          IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}" IsEnabled="{TemplateBinding IsEnabled}"
+                          Content="{TemplateBinding Header}" ContentTemplate="{TemplateBinding HeaderTemplate}"/>
+            <Border x:Name="ExpanderContent" IsVisible="{TemplateBinding IsExpanded}" Padding="{TemplateBinding Padding}">
+              <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+          </DockPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <!-- Separator: soft tonal groove (dark line over light line), no hard rule -->
+  <ControlTheme x:Key="{x:Type Separator}" TargetType="Separator">
+    <Setter Property="Height" Value="2"/>
+    <Setter Property="Margin" Value="0,6"/>
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid RowDefinitions="1,1">
+          <Border Background="{DynamicResource ChGrooveDarkBrush}"/>
+          <Border Grid.Row="1" Background="{DynamicResource ChGrooveLightBrush}"/>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.vertical"><Setter Property="Height" Value="NaN"/><Setter Property="Width" Value="2"/><Setter Property="Margin" Value="4,3"/></Style>
+  </ControlTheme>
+
+</Styles.Resources>
+
+  <!-- ===== doc tabs (IDE): applies to TabItems inside a TabControl.doc ===== -->
+  <Style Selector="TabControl.doc TabItem">
+    <Setter Property="Height" Value="25"/>
+    <Setter Property="Margin" Value="0,0,0,0"/>
+    <Setter Property="Padding" Value="10,0,8,0"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Background" Value="{DynamicResource ChChromeSoftBrush}"/>
+  </Style>
+  <Style Selector="TabControl.doc TabItem /template/ Border#PART_LayoutRoot"><Setter Property="BoxShadow" Value="{DynamicResource ChTabShadow}"/></Style>
+  <Style Selector="TabControl.doc TabItem:pointerover"><Setter Property="Background" Value="{DynamicResource ChChromeHoverBrush}"/></Style>
+  <Style Selector="TabControl.doc TabItem:selected"><Setter Property="Height" Value="27"/><Setter Property="Background" Value="{DynamicResource ChEditorBrush}"/></Style>
+  <Style Selector="TabControl.doc TabItem:selected /template/ Border#PART_LayoutRoot"><Setter Property="BoxShadow" Value="{DynamicResource ChTabSelectedShadow}"/></Style>
+
+  <!-- Separator inside menus: indented groove -->
+  <Style Selector="MenuItem > Separator, ContextMenu > Separator, MenuFlyoutPresenter > Separator, Menu Separator">
+    <Setter Property="Margin" Value="30,4,10,4"/>
+  </Style>
+
+  <!-- ===== Menu bar ===== -->
+  <Style Selector="Menu">
+    <Setter Property="Height" Value="NaN"/>
+    <Setter Property="Padding" Value="6,4,6,2"/>
+    <Setter Property="FontSize" Value="13"/>
+  </Style>
+  <Style Selector="Menu > MenuItem">
+    <Setter Property="Padding" Value="9,3"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+  </Style>
+  <Style Selector="Menu > MenuItem /template/ Border#PART_LayoutRoot"><Setter Property="MinHeight" Value="0"/></Style>
+  <Style Selector="Menu > MenuItem:selected /template/ Border#PART_LayoutRoot, Menu > MenuItem:open /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource ChAccentSoftBrush}"/>
+    <Setter Property="BoxShadow" Value="{DynamicResource ChMenuBarHoverShadow}"/>
+  </Style>
+  <Style Selector="Menu > MenuItem:selected /template/ ContentPresenter#PART_HeaderPresenter, Menu > MenuItem:pressed /template/ ContentPresenter#PART_HeaderPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+  </Style>
+
+  <!-- ===== Menu items (submenus, context menus) ===== -->
+  <Style Selector="MenuItem">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="Padding" Value="6,3"/>
+    <Setter Property="FontSize" Value="13"/>
+  </Style>
+  <Style Selector="MenuItem /template/ Border#PART_LayoutRoot"><Setter Property="MinHeight" Value="24"/></Style>
+  <Style Selector="MenuItem:selected /template/ Border#PART_LayoutRoot, MenuItem:open /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource ChSelectBandBrush}"/>
+    <Setter Property="BoxShadow" Value="{DynamicResource ChSelectBand}"/>
+  </Style>
+  <Style Selector="MenuItem:selected /template/ ContentPresenter#PART_HeaderPresenter, MenuItem:pressed /template/ ContentPresenter#PART_HeaderPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+  </Style>
+  <Style Selector="MenuItem /template/ TextBlock#PART_InputGestureText"><Setter Property="Foreground" Value="{DynamicResource ChTextMutedBrush}"/><Setter Property="FontSize" Value="11"/></Style>
+  <Style Selector="MenuItem /template/ Path#PART_ChevronPath"><Setter Property="Fill" Value="{DynamicResource ChTextMutedBrush}"/></Style>
+  <Style Selector="MenuItem:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  <Style Selector="MenuItem:disabled /template/ ContentPresenter#PART_HeaderPresenter"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  <!-- ChElev5's drop is offset 22px with a 44px blur, so the shadow reaches
+       36px sideways, 14px above and 58px below the card. The margin is that
+       box plus a few pixels, or the popup root clips it flat.
+       :open offsets cancel the extra margin so the card stays where it was.
+       A top-level menu is the exception: its popup used to start 16px above
+       the header. That empty margin covers the other headers, so a click
+       never reaches the bar and the open menu cannot be switched. The card
+       stays flush with the header. The upward shadow clips under the bar. -->
+  <Style Selector="MenuItem /template/ Popup#PART_Popup > Border">
+    <Setter Property="Background" Value="{DynamicResource ChPopupBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="Margin" Value="40,18,40,62"/>
+    <Setter Property="MinWidth" Value="200"/>
+    <Setter Property="BoxShadow" Value="{DynamicResource ChElev5}"/>
+  </Style>
+  <Style Selector="Menu > MenuItem /template/ Popup#PART_Popup > Border">
+    <Setter Property="Margin" Value="40,0,40,62"/>
+  </Style>
+  <Style Selector="Menu > MenuItem:open /template/ Popup#PART_Popup">
+    <Setter Property="HorizontalOffset" Value="-34"/>
+    <Setter Property="VerticalOffset" Value="0"/>
+  </Style>
+  <Style Selector="MenuItem > MenuItem:open /template/ Popup#PART_Popup">
+    <Setter Property="HorizontalOffset" Value="-38"/>
+    <Setter Property="VerticalOffset" Value="-16"/>
+  </Style>
+
+  <Style Selector="ContextMenu">
+    <Setter Property="Background" Value="{DynamicResource ChPopupBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="HorizontalOffset" Value="-34"/>
+    <Setter Property="VerticalOffset" Value="-16"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+  </Style>
+  <!-- Margin sits on the same border as the shadow. A margin on the menu itself
+       leaves the shadow clipped at the card. -->
+  <Style Selector="ContextMenu /template/ Border">
+    <Setter Property="BoxShadow" Value="{DynamicResource ChElev5}"/>
+    <Setter Property="Margin" Value="40,18,40,62"/>
+    <Setter Property="MinWidth" Value="200"/>
+  </Style>
+  <Style Selector="MenuFlyoutPresenter">
+    <Setter Property="Background" Value="{DynamicResource ChPopupBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+  </Style>
+  <Style Selector="MenuFlyout">
+    <Setter Property="HorizontalOffset" Value="-34"/>
+    <Setter Property="VerticalOffset" Value="-16"/>
+  </Style>
+  <Style Selector="MenuFlyoutPresenter /template/ Border#LayoutRoot">
+    <Setter Property="BoxShadow" Value="{DynamicResource ChElev5}"/>
+    <Setter Property="Margin" Value="40,18,40,62"/>
+    <Setter Property="MinWidth" Value="200"/>
+  </Style>
+
+  <!-- ===== DataGrid (Fluent template; colours bridged in ChiselTokens) ===== -->
+  <Style Selector="DataGrid">
+    <Setter Property="Background" Value="{DynamicResource ChDishLgFieldBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="GridLinesVisibility" Value="None"/>
+    <Setter Property="HeadersVisibility" Value="Column"/>
+    <Setter Property="RowHeight" Value="22"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+  </Style>
+  <Style Selector="DataGrid /template/ Border#DataGridBorder"><Setter Property="CornerRadius" Value="6"/><Setter Property="BoxShadow" Value="{DynamicResource ChElevSunken}"/><Setter Property="ClipToBounds" Value="False"/></Style>
+  <Style Selector="DataGridColumnHeader">
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="MinHeight" Value="24"/>
+    <Setter Property="Padding" Value="8,0"/>
+    <Setter Property="SeparatorBrush" Value="{DynamicResource ChGrooveDarkBrush}"/>
+  </Style>
+  <Style Selector="DataGridColumnHeader /template/ Path#SortIcon"><Setter Property="Fill" Value="{DynamicResource ChAccentBrush}"/></Style>
+  <Style Selector="DataGridCell"><Setter Property="Padding" Value="8,0"/><Setter Property="FontSize" Value="13"/></Style>
+  <Style Selector="DataGridRow:nth-child(2n)"><Setter Property="Background" Value="{DynamicResource ChRowAltBrush}"/></Style>
+</Styles>

@@ -1,0 +1,124 @@
+<!-- TextBox, ComboBox, NumericUpDown (sunken dish fields), popup items -->
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Styles.Resources>
+
+  <!-- Selectable row used by ComboBoxItem / menu-like lists: selection band on hover & select -->
+  <ControlTheme x:Key="{x:Type ComboBoxItem}" TargetType="ComboBoxItem">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Padding" Value="8,0"/>
+    <Setter Property="MinHeight" Value="24"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_Surface" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" MinHeight="{TemplateBinding MinHeight}">
+          <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Padding="{TemplateBinding Padding}" Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#PART_Surface"><Setter Property="Background" Value="{DynamicResource ChSelectBandBrush}"/><Setter Property="BoxShadow" Value="{DynamicResource ChSelectBand}"/></Style>
+    <Style Selector="^:selected /template/ Border#PART_Surface"><Setter Property="Background" Value="{DynamicResource ChSelectBandBrush}"/><Setter Property="BoxShadow" Value="{DynamicResource ChSelectBand}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  </ControlTheme>
+
+  <!-- ComboBox: a sunken field (web <select>) with a chevron; popup at elevation 5 -->
+  <ControlTheme x:Key="{x:Type ComboBox}" TargetType="ComboBox">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChDishFieldBrush}"/>
+    <Setter Property="Padding" Value="8,0,4,0"/>
+    <Setter Property="MinHeight" Value="26"/>
+    <Setter Property="MinWidth" Value="80"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="MaxDropDownHeight" Value="420"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Border x:Name="Background" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" BoxShadow="{DynamicResource ChElevSunkenSm}"/>
+          <Grid ColumnDefinitions="*,22">
+            <TextBlock x:Name="PlaceholderTextBlock" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" Text="{TemplateBinding PlaceholderText}"
+                       Foreground="{DynamicResource ChTextMutedBrush}"
+                       IsVisible="{TemplateBinding SelectionBoxItem, Converter={x:Static ObjectConverters.IsNull}}"/>
+            <ContentControl x:Name="ContentPresenter" Margin="{TemplateBinding Padding}" Foreground="{TemplateBinding Foreground}"
+                            Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            <Path x:Name="DropDownGlyph" Grid.Column="1" Data="M0,0 L4,4 L8,0" Stroke="{DynamicResource ChTextSecondaryBrush}" StrokeThickness="1.6"
+                  StrokeLineCap="Round" StrokeJoin="Round" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"/>
+          </Grid>
+          <Popup x:Name="PART_Popup" WindowManagerAddShadowHint="False" Placement="BottomEdgeAlignedLeft" HorizontalOffset="-40" VerticalOffset="-16"
+                 IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}" PlacementTarget="Background" IsLightDismissEnabled="True" InheritsTransform="True">
+            <Border x:Name="PopupBorder" Margin="40,18,40,62" Padding="4" CornerRadius="6"
+                    Background="{DynamicResource ChPopupBrush}" BoxShadow="{DynamicResource ChElev5}"
+                    MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
+              <ScrollViewer HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+                            VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
+                <ItemsPresenter x:Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}"/>
+              </ScrollViewer>
+            </Border>
+          </Popup>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Path#DropDownGlyph"><Setter Property="Stroke" Value="{DynamicResource ChAccentBrush}"/></Style>
+    <Style Selector="^:focus-within /template/ Border#Background"><Setter Property="BoxShadow" Value="{DynamicResource ChFieldFocusShadow}"/></Style>
+    <Style Selector="^:dropdownopen /template/ Border#Background"><Setter Property="BoxShadow" Value="{DynamicResource ChFieldFocusShadow}"/></Style>
+    <Style Selector="^:error /template/ Border#Background"><Setter Property="BoxShadow" Value="{DynamicResource ChFieldInvalidShadow}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/><Setter Property="Background" Value="{DynamicResource ChDishWellBrush}"/></Style>
+  </ControlTheme>
+
+</Styles.Resources>
+
+  <!-- ===== TextBox (Fluent template, ChiselUI parts) ===== -->
+  <Style Selector="TextBox">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChDishFieldBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="MinHeight" Value="26"/>
+    <Setter Property="Padding" Value="8,3"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="CaretBrush" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="SelectionBrush" Value="{DynamicResource ChAccentGlowBrush}"/>
+    <Setter Property="SelectionForegroundBrush" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+  </Style>
+  <Style Selector="TextBox /template/ Border#PART_BorderElement">
+    <Setter Property="BoxShadow" Value="{DynamicResource ChElevSunkenSm}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="MinHeight" Value="0"/>
+  </Style>
+  <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement, TextBox:focus /template/ Border#PART_BorderElement">
+    <Setter Property="Background" Value="{DynamicResource ChDishFieldBrush}"/>
+    <Setter Property="BorderThickness" Value="0"/>
+  </Style>
+  <Style Selector="TextBox:pointerover, TextBox:focus"><Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/></Style>
+  <Style Selector="TextBox:pointerover /template/ TextBlock#PART_Watermark, TextBox:focus /template/ TextBlock#PART_Watermark, TextBox /template/ TextBlock#PART_Watermark">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextMutedBrush}"/>
+  </Style>
+  <Style Selector="TextBox:focus /template/ Border#PART_BorderElement"><Setter Property="BoxShadow" Value="{DynamicResource ChFieldFocusShadow}"/></Style>
+  <Style Selector="TextBox:error /template/ Border#PART_BorderElement, TextBox.invalid /template/ Border#PART_BorderElement"><Setter Property="BoxShadow" Value="{DynamicResource ChFieldInvalidShadow}"/></Style>
+  <Style Selector="TextBox:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+  <Style Selector="TextBox:disabled /template/ Border#PART_BorderElement"><Setter Property="Background" Value="{DynamicResource ChDishWellBrush}"/></Style>
+  <Style Selector="TextBox[AcceptsReturn=True]"><Setter Property="Padding" Value="8,6"/><Setter Property="MinHeight" Value="64"/><Setter Property="VerticalContentAlignment" Value="Top"/></Style>
+  <Style Selector="TextBox.mono"><Setter Property="FontFamily" Value="{DynamicResource ChFontMono}"/><Setter Property="FontSize" Value="12"/></Style>
+  <Style Selector="TextBox.search"><Setter Property="CornerRadius" Value="999"/><Setter Property="Padding" Value="12,3"/></Style>
+
+  <!-- ===== NumericUpDown: field + compact gel spinner ===== -->
+  <Style Selector="NumericUpDown"><Setter Property="MinHeight" Value="26"/><Setter Property="ClipToBounds" Value="False"/><Setter Property="CornerRadius" Value="4"/></Style>
+  <Style Selector="NumericUpDown /template/ ButtonSpinner"><Setter Property="Background" Value="{DynamicResource ChDishFieldBrush}"/><Setter Property="BorderThickness" Value="0"/><Setter Property="CornerRadius" Value="4"/><Setter Property="MinHeight" Value="26"/></Style>
+  <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox /template/ Border#PART_BorderElement"><Setter Property="BoxShadow" Value="none"/><Setter Property="Background" Value="Transparent"/></Style>
+  <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox"><Setter Property="Background" Value="Transparent"/></Style>
+  <Style Selector="ButtonSpinner"><Setter Property="ClipToBounds" Value="False"/></Style>
+  <Style Selector="ButtonSpinner /template/ DataValidationErrors > Border"><Setter Property="BoxShadow" Value="{DynamicResource ChElevSunkenSm}"/></Style>
+  <Style Selector="ButtonSpinner /template/ RepeatButton"><Setter Property="MinWidth" Value="22"/><Setter Property="Padding" Value="0"/><Setter Property="MinHeight" Value="0"/><Setter Property="CornerRadius" Value="3"/><Setter Property="Margin" Value="1"/></Style>
+</Styles>

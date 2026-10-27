@@ -1,0 +1,10 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:chisel="clr-namespace:ChiselUI.Avalonia;assembly=ChiselUI.Avalonia"
+             x:Class="ChiselUI.Demo.App"
+             RequestedThemeVariant="Light">
+  <Application.Styles>
+    <!-- One line: ChiselUI (includes Fluent as the structural base) -->
+    <chisel:ChiselTheme Accent="#2f6bd8"/>
+  </Application.Styles>
+</Application>

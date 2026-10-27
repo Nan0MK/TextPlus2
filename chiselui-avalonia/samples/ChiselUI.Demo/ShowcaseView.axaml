@@ -1,0 +1,529 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="using:ChiselUI.Avalonia.Controls"
+             xmlns:local="using:ChiselUI.Demo"
+             x:Class="ChiselUI.Demo.ShowcaseView">
+  <UserControl.Styles>
+    <Style Selector="c|GlassFrame.gallery">
+      <Setter Property="ShowCaptionButtons" Value="False"/>
+    </Style>
+    <Style Selector="c|GlassFrame.gallery > StackPanel">
+      <Setter Property="Margin" Value="14,12,14,14"/>
+      <Setter Property="Spacing" Value="8"/>
+    </Style>
+    <Style Selector="TextBlock.cap">
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="LetterSpacing" Value="0.6"/>
+      <Setter Property="Foreground" Value="{DynamicResource ChTextMutedBrush}"/>
+      <Setter Property="Margin" Value="0,4,0,0"/>
+    </Style>
+    <Style Selector="Grid.form > TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Foreground" Value="{DynamicResource ChTextSecondaryBrush}"/>
+    </Style>
+  </UserControl.Styles>
+  <c:AuroraBackground>
+    <ScrollViewer x:Name="PageScroller" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel x:Name="Page" Margin="20,22,20,24" Spacing="22" MaxWidth="1240">
+
+        <!-- ═══════════ IDE window + overlapping dialog ═══════════ -->
+        <Panel x:Name="secHero" Height="700">
+          <c:GlassFrame x:Name="IdeFrame" Title="main.cpp [debug] — Code Studio" Margin="0,0,330,0" IsInactive="True">
+            <c:GlassFrame.Icon><local:DemoIcon Kind="project" Size="14"/></c:GlassFrame.Icon>
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Classes="chrome" Padding="4,2">
+                <Menu>
+                  <MenuItem Header="_File">
+                    <MenuItem Header="_New" InputGesture="Ctrl+N"/><MenuItem Header="_Open…" InputGesture="Ctrl+O"/>
+                    <MenuItem Header="_Save" InputGesture="Ctrl+S"/><Separator/><MenuItem Header="E_xit"/>
+                  </MenuItem>
+                  <MenuItem Header="_Edit">
+                    <MenuItem Header="_Undo" InputGesture="Ctrl+Z"/><MenuItem Header="_Redo" InputGesture="Ctrl+Y" IsEnabled="False"/><Separator/>
+                    <MenuItem Header="Cu_t" InputGesture="Ctrl+X"/><MenuItem Header="_Copy" InputGesture="Ctrl+C"/><MenuItem Header="_Paste" InputGesture="Ctrl+V"/>
+                  </MenuItem>
+                  <MenuItem Header="_View"><MenuItem Header="Show whitespace" ToggleType="CheckBox" IsChecked="True"/><MenuItem Header="Full screen" InputGesture="F11"/></MenuItem>
+                  <MenuItem Header="_Search"><MenuItem Header="Find…" InputGesture="Ctrl+F"/></MenuItem>
+                  <MenuItem Header="_Project"><MenuItem Header="Build options…"/></MenuItem>
+                  <MenuItem Header="_Build"><MenuItem Header="Build" InputGesture="Ctrl+F9"/><MenuItem Header="Build and run" InputGesture="F9"/></MenuItem>
+                  <MenuItem Header="_Debug"><MenuItem Header="Start" InputGesture="F8"/></MenuItem>
+                  <MenuItem Header="_Tools"/><MenuItem Header="Plu_gins"/><MenuItem Header="Settin_gs"/><MenuItem Header="_Help"/>
+                </Menu>
+              </Border>
+              <!-- toolbars -->
+              <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="6,6,6,0">
+                <Border Classes="toolbar">
+                  <StackPanel Orientation="Horizontal" Spacing="1">
+                    <Button Classes="tool" ToolTip.Tip="New file"><local:DemoIcon Kind="new"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Open"><local:DemoIcon Kind="open"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Save"><local:DemoIcon Kind="save"/></Button>
+                    <Separator Classes="vertical"/>
+                    <Button Classes="tool" ToolTip.Tip="Undo"><local:DemoIcon Kind="undo"/></Button>
+                    <Button Classes="tool" IsEnabled="False"><local:DemoIcon Kind="redo"/></Button>
+                    <Separator Classes="vertical"/>
+                    <Button Classes="tool"><local:DemoIcon Kind="cut"/></Button>
+                    <Button Classes="tool"><local:DemoIcon Kind="copy"/></Button>
+                    <Button Classes="tool"><local:DemoIcon Kind="paste"/></Button>
+                    <ToggleButton Classes="tool" IsChecked="True" ToolTip.Tip="Find"><local:DemoIcon Kind="search"/></ToggleButton>
+                  </StackPanel>
+                </Border>
+                <Border Classes="toolbar">
+                  <StackPanel Orientation="Horizontal" Spacing="1">
+                    <Button Classes="tool" ToolTip.Tip="Build"><local:DemoIcon Kind="gear"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Run"><local:DemoIcon Kind="play"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Build and run"><local:DemoIcon Kind="buildrun"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Abort"><local:DemoIcon Kind="stop"/></Button>
+                    <TextBlock Text="Build target:" VerticalAlignment="Center" Margin="6,0" FontSize="12"/>
+                    <ComboBox SelectedIndex="0" Width="96" Margin="0,0,4,0">
+                      <ComboBoxItem Content="Debug"/><ComboBoxItem Content="Release"/>
+                    </ComboBox>
+                  </StackPanel>
+                </Border>
+                <Border Classes="toolbar">
+                  <StackPanel Orientation="Horizontal" Spacing="1">
+                    <Button Classes="tool" ToolTip.Tip="Debug"><local:DemoIcon Kind="bug"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Step"><local:DemoIcon Kind="step"/></Button>
+                    <Button Classes="tool" ToolTip.Tip="Bookmark"><local:DemoIcon Kind="bookmark"/></Button>
+                    <TextBox Classes="search" Width="130" Margin="4,0,0,0" Text="main() : int"/>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+              <!-- status bar -->
+              <Grid DockPanel.Dock="Bottom" Margin="6,0,6,6" ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="4">
+                <Border Classes="statuscell">
+                  <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Border Classes="led" Background="{DynamicResource ChSuccessBrush}"/>
+                    <TextBlock Text="/home/jake/projects/hello/main.cpp"/>
+                  </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Classes="statuscell"><TextBlock Text="C/C++" VerticalAlignment="Center"/></Border>
+                <Border Grid.Column="2" Classes="statuscell"><TextBlock Text="UTF-8" VerticalAlignment="Center"/></Border>
+                <Border Grid.Column="3" Classes="statuscell"><TextBlock Text="Line 19, Col 1" VerticalAlignment="Center"/></Border>
+                <Border Grid.Column="4" Classes="statuscell"><TextBlock Text="Insert" VerticalAlignment="Center"/></Border>
+                <Border Grid.Column="5" Classes="statuscell"><TextBlock Text="Read/Write" VerticalAlignment="Center"/></Border>
+              </Grid>
+              <!-- docks + editor + logs -->
+              <Grid Margin="6" ColumnDefinitions="214,6,*" RowDefinitions="*,6,190">
+                <Grid RowDefinitions="*,6,Auto">
+                  <Border Classes="dock">
+                    <DockPanel>
+                      <Border DockPanel.Dock="Top" Classes="dockheader active">
+                        <DockPanel><Button DockPanel.Dock="Right" Classes="flat" Padding="4,0" Content="✕" FontSize="10"/><TextBlock Text="Management" VerticalAlignment="Center"/></DockPanel>
+                      </Border>
+                      <Border DockPanel.Dock="Top" Classes="segmented" Margin="6,6,6,4">
+                        <UniformGrid Columns="3">
+                          <ToggleButton Classes="segment" Content="Projects" IsChecked="True" HorizontalAlignment="Stretch"/>
+                          <ToggleButton Classes="segment" Content="Symbols" HorizontalAlignment="Stretch"/>
+                          <ToggleButton Classes="segment" Content="Files" HorizontalAlignment="Stretch"/>
+                        </UniformGrid>
+                      </Border>
+                      <TreeView Margin="2,0,2,4" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeViewItem IsExpanded="True">
+                          <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="workspace"/><TextBlock Text="Workspace"/></StackPanel></TreeViewItem.Header>
+                          <TreeViewItem IsExpanded="True">
+                            <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="project"/><TextBlock Text="debug" FontWeight="Bold"/></StackPanel></TreeViewItem.Header>
+                            <TreeViewItem IsExpanded="True">
+                              <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="folder"/><TextBlock Text="Sources"/></StackPanel></TreeViewItem.Header>
+                              <TreeViewItem IsSelected="True"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="cpp"/><TextBlock Text="main.cpp"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+                              <TreeViewItem><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="cpp"/><TextBlock Text="math.cpp"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+                            </TreeViewItem>
+                            <TreeViewItem IsExpanded="True">
+                              <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="folder"/><TextBlock Text="Headers"/></StackPanel></TreeViewItem.Header>
+                              <TreeViewItem><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="h"/><TextBlock Text="math.h"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+                            </TreeViewItem>
+                            <TreeViewItem>
+                              <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="folder"/><TextBlock Text="Resources"/></StackPanel></TreeViewItem.Header>
+                              <TreeViewItem Header="app.rc"/>
+                            </TreeViewItem>
+                          </TreeViewItem>
+                          <TreeViewItem>
+                            <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="project"/><TextBlock Text="unit-tests"/></StackPanel></TreeViewItem.Header>
+                            <TreeViewItem Header="tests.cpp"/>
+                          </TreeViewItem>
+                        </TreeViewItem>
+                      </TreeView>
+                    </DockPanel>
+                  </Border>
+                  <Border Grid.Row="2" Classes="dock">
+                    <DockPanel>
+                      <Border DockPanel.Dock="Top" Classes="dockheader">
+                        <DockPanel><Button DockPanel.Dock="Right" Classes="flat" Padding="4,0" Content="✕" FontSize="10"/><TextBlock Text="Open files" VerticalAlignment="Center"/></DockPanel>
+                      </Border>
+                      <ListBox Classes="flat" SelectedIndex="0" Margin="2,4">
+                        <ListBoxItem><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="cpp"/><TextBlock Text="main.cpp"/></StackPanel></ListBoxItem>
+                        <ListBoxItem><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="h"/><TextBlock Text="math.h"/></StackPanel></ListBoxItem>
+                      </ListBox>
+                    </DockPanel>
+                  </Border>
+                </Grid>
+                <!-- editor -->
+                <TabControl Grid.Column="2" Classes="doc" SelectedIndex="0">
+                  <TabItem>
+                    <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="cpp"/><TextBlock Text="main.cpp"/><Ellipse Width="7" Height="7" Fill="{DynamicResource ChAccentBrush}" VerticalAlignment="Center"/></StackPanel></TabItem.Header>
+                    <Border Classes="editor">
+                      <ScrollViewer x:Name="EditorScroll" HorizontalScrollBarVisibility="Auto">
+                        <Grid x:Name="EditorGrid" ColumnDefinitions="44,14,*"/>
+                      </ScrollViewer>
+                    </Border>
+                  </TabItem>
+                  <TabItem>
+                    <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="cpp"/><TextBlock Text="math.cpp"/></StackPanel></TabItem.Header>
+                    <Border Classes="editor" Padding="12"><TextBlock Text="int addem(int a, int b) { return a + b; }"/></Border>
+                  </TabItem>
+                  <TabItem>
+                    <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="h"/><TextBlock Text="math.h"/></StackPanel></TabItem.Header>
+                    <Border Classes="editor" Padding="12"><TextBlock Text="#pragma once&#10;int addem(int, int);"/></Border>
+                  </TabItem>
+                </TabControl>
+                <!-- logs -->
+                <TabControl Grid.Row="2" Grid.ColumnSpan="3" Classes="doc" SelectedIndex="1">
+                  <TabItem>
+                    <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="gear"/><TextBlock Text="Build log"/></StackPanel></TabItem.Header>
+                    <Border Classes="console" CornerRadius="0" Margin="0"><TextBlock Text="g++ -Wall -g -std=c++20 -c main.cpp -o obj/Debug/main.o&#10;g++ -o bin/Debug/hello obj/Debug/main.o obj/Debug/math.o&#10;Output file is bin/Debug/hello with size 61.2 KB"/></Border>
+                  </TabItem>
+                  <TabItem>
+                    <TabItem.Header>
+                      <StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="warn"/><TextBlock Text="Build messages"/>
+                        <Border Classes="badge warning"><TextBlock Text="3"/></Border></StackPanel>
+                    </TabItem.Header>
+                    <DataGrid x:Name="BuildGrid" x:DataType="local:BuildMessage" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" Margin="0" CornerRadius="0">
+                      <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="File" Width="140" SortMemberPath="File">
+                          <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate x:DataType="local:BuildMessage">
+                              <StackPanel Orientation="Horizontal" Spacing="6" Margin="8,0" VerticalAlignment="Center"><local:DemoIcon Kind="{Binding Icon}" Size="14"/><TextBlock Text="{Binding File}" VerticalAlignment="Center"/></StackPanel>
+                            </DataTemplate>
+                          </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Line" Binding="{Binding Line}" Width="80"/>
+                        <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*"/>
+                      </DataGrid.Columns>
+                    </DataGrid>
+                  </TabItem>
+                  <TabItem>
+                    <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="search"/><TextBlock Text="Search results"/></StackPanel></TabItem.Header>
+                    <TextBlock Margin="12" Classes="secondary" Text="No search performed."/>
+                  </TabItem>
+                  <TabItem>
+                    <TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="bug"/><TextBlock Text="Debugger"/></StackPanel></TabItem.Header>
+                    <TextBlock Margin="12" Classes="secondary" Text="Debugger not running."/>
+                  </TabItem>
+                </TabControl>
+              </Grid>
+            </DockPanel>
+          </c:GlassFrame>
+
+          <!-- dialog -->
+          <c:GlassFrame x:Name="DialogFrame" IsDialog="True" ShowMinMax="False" Title="Project / targets options"
+                        Width="440" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,56,0,0">
+            <c:GlassFrame.Icon><local:DemoIcon Kind="gear" Size="14"/></c:GlassFrame.Icon>
+            <DockPanel Margin="10">
+              <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,*,Auto" Margin="0,10,0,0">
+                <Button Classes="sm" Content="Help" MinWidth="64"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                  <Button Classes="sm primary" Content="OK" MinWidth="64"/>
+                  <Button Classes="sm" Content="Cancel" MinWidth="64"/>
+                  <Button Classes="sm" Content="Apply" MinWidth="64" IsEnabled="False"/>
+                </StackPanel>
+              </Grid>
+              <TabControl SelectedIndex="0">
+                <TabItem Header="General">
+                  <StackPanel Spacing="8">
+                    <c:GroupBox Header="Project">
+                      <Grid Classes="form" ColumnDefinitions="76,*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="6" ColumnSpacing="6">
+                        <TextBlock Text="Title:"/><TextBox Grid.Column="1" Grid.ColumnSpan="2" Text="hello"/>
+                        <TextBlock Grid.Row="1" Text="Platforms:"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" SelectedIndex="0" HorizontalAlignment="Stretch">
+                          <ComboBoxItem Content="All"/><ComboBoxItem Content="Windows"/><ComboBoxItem Content="Linux"/>
+                        </ComboBox>
+                        <TextBlock Grid.Row="2" Text="Output:"/><TextBox Grid.Row="2" Grid.Column="1" Text="bin/Debug/hello"/>
+                        <Button Grid.Row="2" Grid.Column="2" Classes="sm" Content="Browse…"/>
+                      </Grid>
+                    </c:GroupBox>
+                    <Grid ColumnDefinitions="*,8,*">
+                      <c:GroupBox Header="Target type">
+                        <StackPanel Spacing="4">
+                          <RadioButton Content="Console application" IsChecked="True"/>
+                          <RadioButton Content="GUI application"/>
+                          <RadioButton Content="Static library"/>
+                          <RadioButton Content="Native (driver)" IsEnabled="False"/>
+                        </StackPanel>
+                      </c:GroupBox>
+                      <c:GroupBox Grid.Column="2" Header="Compiler flags">
+                        <StackPanel Spacing="4">
+                          <CheckBox Content="-Wall warnings" IsChecked="True"/>
+                          <CheckBox Content="Debug symbols -g" IsChecked="True"/>
+                          <CheckBox Content="C++20 modules" IsThreeState="True" IsChecked="{x:Null}"/>
+                          <CheckBox Content="Treat warnings as errors"/>
+                        </StackPanel>
+                      </c:GroupBox>
+                    </Grid>
+                    <c:GroupBox Header="Optimization level">
+                      <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                        <Slider Minimum="0" Maximum="3" Value="2" TickFrequency="1" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                        <ToggleSwitch Grid.Column="1" IsChecked="True" OnContent="LTO" OffContent="LTO" Margin="10,0,0,0"/>
+                        <UniformGrid Grid.Row="1" Columns="4" Margin="2,0,0,0">
+                          <TextBlock Classes="muted xs" Text="-O0"/><TextBlock Classes="muted xs" Text="-O1"/>
+                          <TextBlock Classes="muted xs" Text="-O2"/><TextBlock Classes="muted xs" Text="-O3"/>
+                        </UniformGrid>
+                      </Grid>
+                    </c:GroupBox>
+                    <c:GroupBox Classes="well">
+                      <StackPanel Spacing="6">
+                        <DockPanel><TextBlock DockPanel.Dock="Right" Classes="secondary sm" Text="62%"/><TextBlock Classes="sm" Text="Indexing symbols…"/></DockPanel>
+                        <ProgressBar Value="62" Height="12"/>
+                      </StackPanel>
+                    </c:GroupBox>
+                  </StackPanel>
+                </TabItem>
+                <TabItem Header="Build targets"><TextBlock Margin="8" Text="Debug, Release"/></TabItem>
+                <TabItem Header="Debugger"><TextBlock Margin="8" Text="GDB"/></TabItem>
+                <TabItem Header="Notes"><TextBox AcceptsReturn="True" Text="Remember to bump the version."/></TabItem>
+              </TabControl>
+            </DockPanel>
+          </c:GlassFrame>
+        </Panel>
+
+        <!-- ═══════════ Components ═══════════ -->
+        <StackPanel Spacing="4">
+          <TextBlock Classes="h2 desktop" Text="Components"/>
+          <TextBlock Classes="desktop" TextWrapping="Wrap" MaxWidth="560" HorizontalAlignment="Left"
+                     Text="Every block below sits on the same elevation scale as the IDE: wells sink, panels sit, toolbars and cards rise, windows float, menus hover above."/>
+        </StackPanel>
+
+        <Grid x:Name="secGallery" ColumnDefinitions="*,18,*,18,*" RowDefinitions="Auto,18,Auto,18,Auto,18,Auto">
+          <!-- Buttons -->
+          <c:GlassFrame x:Name="secButtons" Classes="gallery" Title="Buttons">
+            <StackPanel>
+              <TextBlock Classes="cap" Text="PUSH BUTTONS"/>
+              <WrapPanel ItemSpacing="6" LineSpacing="6">
+                <Button Classes="primary" Content="Primary"/><Button Content="Secondary"/><Button Classes="danger" Content="Delete"/>
+              </WrapPanel>
+              <TextBlock Classes="cap" Text="STATES"/>
+              <WrapPanel ItemSpacing="6" LineSpacing="6">
+                <ToggleButton Content="Pressed" IsChecked="True"/><Button Content="Disabled" IsEnabled="False"/><Button Classes="primary" Content="Disabled" IsEnabled="False"/>
+              </WrapPanel>
+              <TextBlock Classes="cap" Text="SMALL / ICON"/>
+              <WrapPanel ItemSpacing="6" LineSpacing="6">
+                <Button Classes="sm" Content="Small"/><Button Classes="sm primary" Content="Small primary"/>
+                <Button Classes="icon"><local:DemoIcon Kind="save"/></Button><Button Classes="icon"><local:DemoIcon Kind="gear"/></Button>
+              </WrapPanel>
+              <TextBlock Classes="cap" Text="TOOLBAR BUTTONS"/>
+              <Border Classes="toolbar" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" Spacing="1">
+                  <Button Classes="tool"><local:DemoIcon Kind="new"/></Button>
+                  <ToggleButton Classes="tool" IsChecked="True"><local:DemoIcon Kind="search"/></ToggleButton>
+                  <Button Classes="tool"><local:DemoIcon Kind="play"/></Button>
+                  <Button Classes="tool" IsEnabled="False"><local:DemoIcon Kind="stop"/></Button>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </c:GlassFrame>
+          <!-- Inputs -->
+          <c:GlassFrame Grid.Column="2" Classes="gallery" Title="Inputs">
+            <StackPanel>
+              <Grid Classes="form" ColumnDefinitions="70,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
+                <TextBlock Text="Name"/><TextBox Grid.Column="1" Watermark="Untitled project"/>
+                <TextBlock Grid.Row="1" Text="Email" VerticalAlignment="Top" Margin="0,5,0,0"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="3">
+                  <TextBox Classes="invalid" Text="jake@"/>
+                  <TextBlock Classes="danger xs" Text="Enter a full email address."/>
+                </StackPanel>
+                <TextBlock Grid.Row="2" Text="Language"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Stretch"><ComboBoxItem Content="C++"/><ComboBoxItem Content="C#"/><ComboBoxItem Content="Rust"/></ComboBox>
+                <TextBlock Grid.Row="3" Text="Retries"/>
+                <NumericUpDown Grid.Row="3" Grid.Column="1" Value="3" Minimum="0" Maximum="9"/>
+                <TextBlock Grid.Row="4" Text="Disabled"/><TextBox Grid.Row="4" Grid.Column="1" IsEnabled="False" Text="Read only"/>
+              </Grid>
+              <TextBox Classes="search" Watermark="Search components"/>
+              <TextBox AcceptsReturn="True" Watermark="Multi-line text…" Height="64"/>
+            </StackPanel>
+          </c:GlassFrame>
+          <!-- Choices -->
+          <c:GlassFrame Grid.Column="4" Classes="gallery" Title="Choices, sliders &amp; progress">
+            <StackPanel>
+              <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+                <CheckBox Content="Checked" IsChecked="True"/><RadioButton Grid.Column="1" GroupName="g" Content="Selected" IsChecked="True"/>
+                <CheckBox Grid.Row="1" Content="Unchecked"/><RadioButton Grid.Row="1" Grid.Column="1" GroupName="g" Content="Option"/>
+                <CheckBox Grid.Row="2" Content="Disabled" IsEnabled="False" IsChecked="True"/><RadioButton Grid.Row="2" Grid.Column="1" GroupName="g" Content="Disabled" IsEnabled="False"/>
+              </Grid>
+              <StackPanel Orientation="Horizontal" Spacing="16">
+                <ToggleSwitch IsChecked="True" OnContent="Auto-save" OffContent="Auto-save"/>
+                <ToggleSwitch OnContent="Word wrap" OffContent="Word wrap"/>
+              </StackPanel>
+              <Slider Value="62" Maximum="100"/>
+              <ProgressBar Value="72" Height="12"/>
+              <ProgressBar Classes="success" Value="100" Height="12"/>
+              <ProgressBar IsIndeterminate="False" Value="38" Height="8"/>
+            </StackPanel>
+          </c:GlassFrame>
+
+          <!-- Tabs -->
+          <c:GlassFrame Grid.Row="2" Classes="gallery" Title="Tabs">
+            <StackPanel>
+              <TextBlock Classes="cap" Text="DOCUMENT TABS"/>
+              <Border Classes="field" Height="64" ClipToBounds="True">
+                <TabControl Classes="doc" SelectedIndex="0">
+                  <TabItem><TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="cpp"/><TextBlock Text="app.cpp"/></StackPanel></TabItem.Header>
+                    <TextBlock Margin="10,6" Classes="sm" Text="Active tab joins the surface below it."/></TabItem>
+                  <TabItem><TabItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="h"/><TextBlock Text="app.h"/></StackPanel></TabItem.Header></TabItem>
+                  <TabItem Header="README"/>
+                </TabControl>
+              </Border>
+              <TextBlock Classes="cap" Text="PROPERTY-SHEET TABS"/>
+              <TabControl SelectedIndex="1" Height="96">
+                <TabItem Header="General"/>
+                <TabItem Header="Sharing"><TextBlock Classes="sm" Text="Sheet body is a raised page."/></TabItem>
+                <TabItem Header="Security"/>
+              </TabControl>
+              <TextBlock Classes="cap" Text="SEGMENTED"/>
+              <Border Classes="segmented" HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" Spacing="2">
+                  <ToggleButton Classes="segment" Content="Day"/><ToggleButton Classes="segment" Content="Week" IsChecked="True"/><ToggleButton Classes="segment" Content="Month"/>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </c:GlassFrame>
+          <!-- Badges & alerts -->
+          <c:GlassFrame Grid.Row="2" Grid.Column="2" Classes="gallery" Title="Badges &amp; alerts">
+            <StackPanel>
+              <WrapPanel ItemSpacing="5" LineSpacing="5">
+                <Border Classes="badge neutral"><TextBlock Text="Default"/></Border>
+                <Border Classes="badge"><TextBlock Text="Accent"/></Border>
+                <Border Classes="badge success"><TextBlock Text="Passed"/></Border>
+                <Border Classes="badge warning"><TextBlock Text="Pending"/></Border>
+                <Border Classes="badge danger"><TextBlock Text="Failed"/></Border>
+                <Border Classes="badge soft"><TextBlock Text="Soft"/></Border>
+              </WrapPanel>
+              <local:Alert Kind="info" Title="Update available" Text="Code Studio 7.2 is ready to install."/>
+              <local:Alert Kind="ok" Title="Build succeeded" Text="0 errors, 3 warnings."/>
+              <local:Alert Kind="warn" Title="Unsaved changes" Text="main.cpp has been modified."/>
+              <local:Alert Kind="error" Title="Linker error" Text="undefined reference to 'addem'."/>
+            </StackPanel>
+          </c:GlassFrame>
+          <!-- Menus & tooltip -->
+          <c:GlassFrame Grid.Row="2" Grid.Column="4" Classes="gallery" Title="Menus &amp; tooltip">
+            <StackPanel>
+              <Border Classes="chrome" CornerRadius="4" Padding="2" HorizontalAlignment="Left">
+                <Menu><MenuItem Header="File"/><MenuItem Header="Edit"/><MenuItem Header="View"/></Menu>
+              </Border>
+              <!-- a static, always-open copy of the popup surface (real menus open on click) -->
+              <Border Classes="popup" Width="230" HorizontalAlignment="Left" Margin="40,-4,0,0">
+                <StackPanel>
+                  <MenuItem Header="Undo" InputGesture="Ctrl+Z"><MenuItem.Icon><local:DemoIcon Kind="undo"/></MenuItem.Icon></MenuItem>
+                  <MenuItem Header="Redo" InputGesture="Ctrl+Y" IsEnabled="False"><MenuItem.Icon><local:DemoIcon Kind="redo"/></MenuItem.Icon></MenuItem>
+                  <Separator/>
+                  <MenuItem x:Name="DemoHotItem" Header="Cut" InputGesture="Ctrl+X"><MenuItem.Icon><local:DemoIcon Kind="cut"/></MenuItem.Icon></MenuItem>
+                  <MenuItem Header="Copy" InputGesture="Ctrl+C"><MenuItem.Icon><local:DemoIcon Kind="copy"/></MenuItem.Icon></MenuItem>
+                  <MenuItem Header="Paste" InputGesture="Ctrl+V"><MenuItem.Icon><local:DemoIcon Kind="paste"/></MenuItem.Icon></MenuItem>
+                  <Separator/>
+                  <MenuItem Header="Show whitespace" ToggleType="CheckBox" IsChecked="True"/>
+                  <MenuItem Header="Convert case"><MenuItem Header="UPPER"/><MenuItem Header="lower"/></MenuItem>
+                </StackPanel>
+              </Border>
+              <Border Classes="tooltip" HorizontalAlignment="Left" Margin="10,2,0,0" MaxWidth="200">
+                <StackPanel Spacing="2">
+                  <TextBlock FontWeight="SemiBold" Text="Build and run (F9)"/>
+                  <TextBlock TextWrapping="Wrap" Text="Compiles changed files, then launches the target."/>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </c:GlassFrame>
+
+          <!-- Cards, wells & glass -->
+          <c:GlassFrame Grid.Row="4" Grid.ColumnSpan="3" Classes="gallery" Title="Cards, wells &amp; glass">
+            <StackPanel>
+              <Grid ColumnDefinitions="*,14,*">
+                <Border Classes="card">
+                  <StackPanel>
+                    <Border Classes="cardheader"><StackPanel Orientation="Horizontal" Spacing="8"><local:DemoIcon Kind="folder"/><TextBlock Text="Project summary" FontWeight="SemiBold"/></StackPanel></Border>
+                    <StackPanel Margin="12,10" Spacing="10">
+                      <TextBlock Classes="sm" TextWrapping="Wrap" Text="4 files · 312 lines · last built 3 minutes ago. Cards are raised (elevation 2) with a chrome header."/>
+                      <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                        <Button Classes="sm" Content="Details"/><Button Classes="sm primary" Content="Build"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+                <StackPanel Grid.Column="2" Spacing="12">
+                  <Border Classes="well"><TextBlock Classes="sm secondary" TextWrapping="Wrap" Text="A well is a sunken tray (elevation −1) for read-only output, previews, drop zones."/></Border>
+                  <Border Classes="glasscard">
+                    <StackPanel Spacing="2">
+                      <TextBlock Classes="glass" FontWeight="SemiBold" Text="Frosted glass"/>
+                      <TextBlock Classes="glass sm" TextWrapping="Wrap" Text="Tinted glass is reserved for big chrome: title bars, the IDE, the dialog and this one demo."/>
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+              </Grid>
+              <Border Classes="console" Margin="0,4,0,0">
+                <TextBlock><Run Text="$ " Foreground="{DynamicResource ChSuccessBrush}"/><Run Text="npm run build"/><Run Text="   # chiselui.css + tokens.json" Foreground="{DynamicResource ChTextMutedBrush}"/></TextBlock>
+              </Border>
+            </StackPanel>
+          </c:GlassFrame>
+          <!-- Scrollbars / expander -->
+          <c:GlassFrame Grid.Row="4" Grid.Column="4" Classes="gallery" Title="Scrollbars &amp; expander">
+            <StackPanel>
+              <Border Classes="field" Height="120" Padding="0">
+                <ScrollViewer AllowAutoHide="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
+                  <TextBlock Margin="10,8" Width="380" TextWrapping="Wrap" Classes="sm"
+                             Text="Gel scrollbar thumbs sit in a sunken track. Hover a thumb to see it light up. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Cras mattis consectetur purus sit amet fermentum. Donec ullamcorper nulla non metus auctor fringilla. Maecenas sed diam eget risus varius blandit sit amet non magna. Aenean lacinia bibendum nulla sed consectetur. Vestibulum id ligula porta felis euismod semper."/>
+                </ScrollViewer>
+              </Border>
+              <Expander Header="Advanced options" IsExpanded="True">
+                <StackPanel Spacing="4"><CheckBox Content="Verbose output"/><CheckBox Content="Keep temp files" IsChecked="True"/></StackPanel>
+              </Expander>
+            </StackPanel>
+          </c:GlassFrame>
+
+          <!-- Data grid -->
+          <c:GlassFrame Grid.Row="6" Grid.ColumnSpan="3" Classes="gallery" Title="Data grid">
+            <StackPanel>
+              <DataGrid x:Name="FilesGrid" x:DataType="local:FileItem" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column" Height="196" SelectedIndex="1">
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Header="Name" Width="*" SortMemberPath="Name">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate x:DataType="local:FileItem">
+                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="8,0" VerticalAlignment="Center"><local:DemoIcon Kind="{Binding Icon}" Size="14"/><TextBlock Text="{Binding Name}" VerticalAlignment="Center"/></StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" Width="150"/>
+                  <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="80"/>
+                  <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="130"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </StackPanel>
+          </c:GlassFrame>
+          <!-- Tokens -->
+          <c:GlassFrame Grid.Row="6" Grid.Column="4" Classes="gallery" Title="Tokens">
+            <StackPanel>
+              <UniformGrid Columns="3" x:Name="TokenGrid"/>
+            </StackPanel>
+          </c:GlassFrame>
+        </Grid>
+
+        <!-- ═══════════ Elevation scale ═══════════ -->
+        <c:GlassFrame x:Name="secElevation" Classes="gallery" Title="Elevation scale">
+          <StackPanel>
+            <UniformGrid Columns="7" Margin="6,10,6,14">
+              <UniformGrid.Styles>
+                <Style Selector="Border.tile"><Setter Property="Height" Value="58"/><Setter Property="Margin" Value="10,0"/><Setter Property="CornerRadius" Value="6"/><Setter Property="Background" Value="{DynamicResource ChSurfaceRaisedBrush}"/></Style>
+                <Style Selector="Border.tile > TextBlock"><Setter Property="HorizontalAlignment" Value="Center"/><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="FontSize" Value="12"/><Setter Property="Foreground" Value="{DynamicResource ChTextSecondaryBrush}"/></Style>
+              </UniformGrid.Styles>
+              <Border Classes="tile sunken" Background="{DynamicResource ChDishWellBrush}"><TextBlock Text="−1 well"/></Border>
+              <Border Classes="tile" Background="{DynamicResource ChSurfaceBaseBrush}"><TextBlock Text="0 base"/></Border>
+              <Border Classes="tile elev1"><TextBlock Text="1 panel"/></Border>
+              <Border Classes="tile elev2"><TextBlock Text="2 raised"/></Border>
+              <Border Classes="tile elev3"><TextBlock Text="3 window"/></Border>
+              <Border Classes="tile elev4"><TextBlock Text="4 dialog"/></Border>
+              <Border Classes="tile elev5"><TextBlock Text="5 popup"/></Border>
+            </UniformGrid>
+          </StackPanel>
+        </c:GlassFrame>
+
+        <TextBlock Classes="desktop sm" TextWrapping="Wrap" Opacity=".85"
+                   Text="ChiselUI for Avalonia — one theme line in App.axaml (&lt;chisel:ChiselTheme/&gt;), light/dark via ThemeVariant, seven gel accents, all tokens as resources."/>
+      </StackPanel>
+    </ScrollViewer>
+  </c:AuroraBackground>
+</UserControl>

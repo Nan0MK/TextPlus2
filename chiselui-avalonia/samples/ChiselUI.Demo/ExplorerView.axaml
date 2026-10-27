@@ -1,0 +1,170 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ChiselUI.Demo"
+             x:Class="ChiselUI.Demo.ExplorerView">
+  <DockPanel>
+    <!-- address row: gel orbs, breadcrumb field, search pill -->
+    <Border DockPanel.Dock="Top" Classes="chrome" Padding="8,6">
+      <Grid ColumnDefinitions="Auto,*,220">
+        <StackPanel Orientation="Horizontal" Spacing="-4" Margin="0,0,10,0">
+          <Button Classes="orb" ToolTip.Tip="Back">
+            <Path Data="M8,1 L2,6 L8,11 M2,6 L13,6" Stroke="White" StrokeThickness="2" StrokeLineCap="Round" StrokeJoin="Round"/>
+          </Button>
+          <Button Classes="orb" IsEnabled="False" ToolTip.Tip="Forward">
+            <Path Data="M5,1 L11,6 L5,11 M11,6 L0,6" Stroke="White" StrokeThickness="2" StrokeLineCap="Round" StrokeJoin="Round"/>
+          </Button>
+        </StackPanel>
+        <Border Grid.Column="1" Classes="wellsm" Height="24" Padding="6,0" Background="{DynamicResource ChDishFieldBrush}">
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Classes="flat" Padding="2" ToolTip.Tip="Refresh"><local:DemoIcon Kind="refresh" Size="13"/></Button>
+            <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+              <local:DemoIcon Kind="library" Size="14"/>
+              <TextBlock Text="Libraries"/><TextBlock Classes="muted" Text="▸"/>
+              <TextBlock Text="Jake"/><TextBlock Classes="muted" Text="▸"/>
+              <TextBlock Text="Documents" FontWeight="SemiBold"/>
+            </StackPanel>
+          </DockPanel>
+        </Border>
+        <TextBox Grid.Column="2" Classes="search" Margin="10,0,0,0" Watermark="Search Documents"/>
+      </Grid>
+    </Border>
+    <!-- command bar -->
+    <Border DockPanel.Dock="Top" Classes="toolbar" Margin="8,8,8,0">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Border Classes="segmented">
+            <StackPanel Orientation="Horizontal" Spacing="2">
+              <ToggleButton x:Name="ViewIcons" Classes="segment" Content="Icons" IsChecked="True" Click="OnIcons"/>
+              <ToggleButton x:Name="ViewDetails" Classes="segment" Content="Details" Click="OnDetails"/>
+            </StackPanel>
+          </Border>
+          <Button Classes="tool" ToolTip.Tip="Help"><local:DemoIcon Kind="help"/></Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+          <Button Classes="tool"><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="organize"/><TextBlock Text="Organize ▾"/></StackPanel></Button>
+          <Button Classes="tool"><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="views"/><TextBlock Text="Views ▾"/></StackPanel></Button>
+          <Separator Classes="vertical"/>
+          <Button Classes="tool"><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="slideshow"/><TextBlock Text="Slide show"/></StackPanel></Button>
+          <Button Classes="tool"><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="share"/><TextBlock Text="Share"/></StackPanel></Button>
+          <Button Classes="tool"><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="burn"/><TextBlock Text="Burn"/></StackPanel></Button>
+          <Button Classes="tool"><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="newfolder"/><TextBlock Text="New folder"/></StackPanel></Button>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+    <!-- status bar -->
+    <Grid DockPanel.Dock="Bottom" Margin="8,0,8,8" ColumnDefinitions="*,Auto" ColumnSpacing="4">
+      <Border Classes="statuscell"><TextBlock x:Name="StatusText" Text="12 items, 1 selected, 2.4 MB" VerticalAlignment="Center"/></Border>
+      <Border Grid.Column="1" Classes="statuscell">
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center"><local:DemoIcon Kind="computer" Size="13"/><TextBlock Text="Computer"/></StackPanel>
+      </Border>
+    </Grid>
+    <Grid Margin="8" ColumnDefinitions="180,8,*,8,220">
+      <!-- navigation pane -->
+      <Border Classes="field" Padding="2,6">
+        <TreeView Classes="flat" x:Name="NavTree" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+          <TreeViewItem IsExpanded="True" FontWeight="SemiBold">
+            <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="star" Size="14"/><TextBlock Text="Favorites"/></StackPanel></TreeViewItem.Header>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="desktop"/><TextBlock Text="Desktop"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="download"/><TextBlock Text="Downloads"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="recent"/><TextBlock Text="Recent places"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem IsExpanded="True" FontWeight="SemiBold">
+            <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="library" Size="14"/><TextBlock Text="Libraries"/></StackPanel></TreeViewItem.Header>
+            <TreeViewItem x:Name="NavDocuments" FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="file"/><TextBlock Text="Documents"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="music"/><TextBlock Text="Music"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="picture"/><TextBlock Text="Pictures"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="video"/><TextBlock Text="Videos"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem IsExpanded="True" FontWeight="SemiBold">
+            <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="computer" Size="14"/><TextBlock Text="Computer"/></StackPanel></TreeViewItem.Header>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="drive"/><TextBlock Text="Local Disk (C:)"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="drive"/><TextBlock Text="Backup (E:)"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem FontWeight="Normal"><TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="dvd"/><TextBlock Text="DVD RW Drive (F:)"/></StackPanel></TreeViewItem.Header></TreeViewItem>
+          </TreeViewItem>
+          <TreeViewItem FontWeight="SemiBold">
+            <TreeViewItem.Header><StackPanel Orientation="Horizontal" Spacing="6"><local:DemoIcon Kind="network" Size="14"/><TextBlock Text="Network"/></StackPanel></TreeViewItem.Header>
+            <TreeViewItem FontWeight="Normal" Header="NAS"/>
+          </TreeViewItem>
+        </TreeView>
+      </Border>
+      <!-- file area -->
+      <Border Grid.Column="2" Classes="field">
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Margin="12,8,12,4">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="4">
+              <TextBlock Classes="secondary sm" Text="Arrange by:"/><TextBlock Classes="accent sm" Text="Folder"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <TextBlock FontWeight="SemiBold" FontSize="12" Text="Documents library"/>
+              <TextBlock Classes="secondary sm" Text="· Includes: 2 locations"/>
+            </StackPanel>
+          </DockPanel>
+          <Panel>
+            <ListBox x:Name="IconList" Classes="flat" Background="Transparent" SelectionChanged="OnSelection">
+              <ListBox.ItemsPanel><ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate></ListBox.ItemsPanel>
+              <ListBox.Styles>
+                <Style Selector="ListBoxItem"><Setter Property="Width" Value="116"/><Setter Property="Margin" Value="2"/><Setter Property="Padding" Value="4,6"/></Style>
+              </ListBox.Styles>
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="local:FileItem">
+                  <StackPanel Spacing="3" HorizontalAlignment="Center">
+                    <local:DemoIcon Kind="{Binding Icon}" Size="58" HorizontalAlignment="Center" Margin="0,4,0,6"/>
+                    <TextBlock Text="{Binding Name}" TextAlignment="Center" TextTrimming="CharacterEllipsis" FontSize="12"/>
+                    <TextBlock Text="{Binding Sub}" Classes="muted xs" TextAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <DataGrid x:Name="DetailsGrid" x:DataType="local:FileItem" IsVisible="False" Margin="6,0,6,6" IsReadOnly="True" AutoGenerateColumns="False"
+                      CanUserResizeColumns="True" HeadersVisibility="Column" SelectionChanged="OnSelection">
+              <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Name" Width="2*">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate x:DataType="local:FileItem">
+                      <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0" VerticalAlignment="Center">
+                        <local:DemoIcon Kind="{Binding Icon}" Size="16"/><TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Date modified" Binding="{Binding Modified}" Width="*"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="80"/>
+              </DataGrid.Columns>
+            </DataGrid>
+          </Panel>
+        </DockPanel>
+      </Border>
+      <!-- preview pane -->
+      <Border Grid.Column="4" Classes="panel" Padding="10">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="6">
+            <Button Classes="primary sm" Content="Open"/>
+            <Button Classes="sm" Content="Share"/>
+          </StackPanel>
+          <StackPanel Spacing="6">
+            <Border Classes="well" Height="130" Padding="0" Background="{DynamicResource ChDishLgConsoleBrush}">
+              <Border Width="104" Height="84" Background="White" CornerRadius="2" BoxShadow="0 3 10 0 #59000000" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <local:DemoIcon x:Name="PreviewIcon" Kind="photo" Size="96" Margin="-4,-10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              </Border>
+            </Border>
+            <TextBlock x:Name="PreviewName" Text="Lake trip.jpg" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0"/>
+            <TextBlock x:Name="PreviewType" Classes="secondary sm" Text="JPEG image"/>
+            <StackPanel Orientation="Horizontal" Spacing="1">
+              <local:DemoIcon Kind="star" Size="13"/><local:DemoIcon Kind="star" Size="13"/><local:DemoIcon Kind="star" Size="13"/><local:DemoIcon Kind="star" Size="13"/><local:DemoIcon Kind="star-off" Size="13"/>
+            </StackPanel>
+            <Grid ColumnDefinitions="78,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="5" Margin="0,6,0,0">
+              <Grid.Styles><Style Selector="TextBlock"><Setter Property="FontSize" Value="12"/></Style></Grid.Styles>
+              <TextBlock Classes="secondary" Text="Type"/><TextBlock x:Name="PropType" Grid.Column="1" Text="JPEG image"/>
+              <TextBlock Grid.Row="1" Classes="secondary" Text="Date taken"/><TextBlock Grid.Row="1" Grid.Column="1" Text="8/14/2026 6:42 PM"/>
+              <TextBlock Grid.Row="2" Classes="secondary" Text="Dimensions"/><TextBlock Grid.Row="2" Grid.Column="1" Text="4032 × 3024"/>
+              <TextBlock Grid.Row="3" Classes="secondary" Text="Size"/><TextBlock x:Name="PropSize" Grid.Row="3" Grid.Column="1" Text="2.4 MB"/>
+              <TextBlock Grid.Row="4" Classes="secondary" Text="Camera"/><TextBlock Grid.Row="4" Grid.Column="1" Text="Aurora X2"/>
+              <TextBlock Grid.Row="5" Classes="secondary" Text="Tags"/><TextBlock Grid.Row="5" Grid.Column="1" Text="lake; summer; hike" TextWrapping="Wrap"/>
+            </Grid>
+          </StackPanel>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </DockPanel>
+</UserControl>

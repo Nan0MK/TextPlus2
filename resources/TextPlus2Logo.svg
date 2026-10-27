@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1{fill:url(#linear-gradient-1)}
+      .cls-2{fill:#000000}
+      .cls-3{fill:url(#radial-gradient-1);opacity:0.7}
+      .cls-4{font-family:&apos;BIZ UDPGothic&apos;, sans-serif;font-size:36;font-weight:bold;fill:#00458f;stroke:#bcdbdd;stroke-miterlimit:10;text-anchor:middle}
+      .cls-5{font-family:&apos;BIZ UDPGothic&apos;, sans-serif;font-size:60;font-weight:bold;fill:#00458f;stroke:#bcdbdd;stroke-miterlimit:10}
+    </style>
+    <linearGradient id="linear-gradient-1" x1="169.505" y1="500" x2="830.495" y2="500" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0082a0"/>
+      <stop offset="1" stop-color="#393266"/>
+    </linearGradient>
+    <radialGradient id="radial-gradient-1" cx="0" cy="0" r="250" gradientTransform="matrix(1 0 0 3.118 545.262 553.041)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#929292"/>
+      <stop offset="1" stop-color="#2a2b2c"/>
+    </radialGradient>
+  </defs>
+  <title>Artboard 1</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <g>
+      <path d="M469.505 159.123 L790.495 159.123 C812.587 159.123 830.495 177.032 830.495 199.123 L830.495 800.877 C830.495 822.968 812.587 840.877 790.495 840.877 L209.505 840.877 C187.413 840.877 169.505 822.968 169.505 800.877 L169.505 459.123 C169.505 293.438 303.819 159.123 469.505 159.123 Z" class="cls-1"/>
+      <path id="_Rounded_Rectangle_" data-name="&lt;Rounded Rectangle&gt;" d="M355.262 324.611 L735.262 324.611 C768.399 324.611 795.262 351.474 795.262 384.611 L795.262 741.273 C795.262 774.41 768.399 801.273 735.262 801.273 L355.262 801.273 C322.125 801.273 295.262 774.41 295.262 741.273 L295.262 384.611 C295.262 351.474 322.125 324.611 355.262 324.611 Z" class="cls-2"/>
+      <path d="M355.262 324.611 L735.262 324.611 C768.399 324.611 795.262 351.474 795.262 384.611 L795.262 721.471 C795.262 754.608 768.399 781.471 735.262 781.471 L355.262 781.471 C322.125 781.471 295.262 754.608 295.262 721.471 L295.262 384.611 C295.262 351.474 322.125 324.611 355.262 324.611 Z" class="cls-3"/>
+      <text transform="matrix(3.934 -0.009 0.008 3.889 545.377 506.22)" x="0" y="0" xml:space="preserve" class="cls-4"><tspan x="0" y="0">TXT+</tspan></text>
+      <text transform="matrix(3.723 0 0 3.723 454.031 739.872)" x="0" y="0" xml:space="preserve" class="cls-5"><tspan x="0" y="0">2</tspan></text>
+    </g>
+  </g>
+</svg>

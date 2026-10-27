@@ -1,0 +1,44 @@
+# Build outputs.
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.rsuser
+*.pubxml.user
+.idea/
+.vscode/
+TestResults/
+artifacts/
+
+# Local secrets and credentials.
+.env
+.env.*
+!.env.example
+secrets.json
+credentials.json
+appsettings.Local.json
+appsettings.*.local.json
+*.pfx
+*.p12
+*.pem
+*.snk
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.publishsettings
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Self-contained builds. The Windows executable is over GitHub's 100 MiB limit.
+releases/
+
+odin/textplus2_odin.exe
+odin/textplus2_odin
+odin/SDL3.dll
+odin/*.pdb

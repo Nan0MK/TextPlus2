@@ -1,0 +1,20 @@
+<!-- ChiselUI for Avalonia.  Usage (App.axaml):
+       xmlns:chisel="clr-namespace:ChiselUI.Avalonia;assembly=ChiselUI.Avalonia"
+       <Application.Styles>
+         <chisel:ChiselTheme Accent="#2f6bd8"/>
+       </Application.Styles>
+     It already includes FluentTheme as the structural base, so do NOT add FluentTheme separately.
+     Light/dark follows Application.RequestedThemeVariant; accent can change at runtime (ChiselTheme.SetAccent). -->
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ChiselUI.Avalonia.ChiselTheme">
+  <FluentTheme/>
+  <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Base.axaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Buttons.axaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Choices.axaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Inputs.axaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Navigation.axaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Surfaces.axaml"/>
+  <StyleInclude Source="avares://ChiselUI.Avalonia/Styles/Window.axaml"/>
+</Styles>

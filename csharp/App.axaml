@@ -1,0 +1,11 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:chisel="using:ChiselUI.Avalonia"
+             x:Class="TextPlus2.App"
+             RequestedThemeVariant="Default">
+  <Application.Styles>
+    <!-- ChiselTheme already includes FluentTheme. Do not add FluentTheme again. -->
+    <chisel:ChiselTheme Accent="#2f6bd8"/>
+    <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml"/>
+  </Application.Styles>
+</Application>

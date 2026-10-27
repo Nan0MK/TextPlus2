@@ -1,0 +1,228 @@
+<!-- CheckBox, RadioButton, ToggleSwitch, Slider, ProgressBar -->
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Styles.Resources>
+
+  <!-- ===== CheckBox: 15px sunken dish; checked = accent gel + white check ===== -->
+  <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Padding" Value="8,0,0,0"/>
+    <Setter Property="MinHeight" Value="22"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="15,*" Background="{TemplateBinding Background}">
+          <Border x:Name="PART_Box" Width="15" Height="15" CornerRadius="4" VerticalAlignment="Center"
+                  Background="{DynamicResource ChDishCheckBrush}" BoxShadow="{DynamicResource ChElevSunkenSm}">
+            <Panel>
+              <Path x:Name="PART_Check" IsVisible="False" Data="M4.44,7.77 L6.42,9.75 L10.65,5.34" Stroke="White" StrokeThickness="1.7"
+                    StrokeLineCap="Round" StrokeJoin="Round"/>
+              <Border x:Name="PART_Dash" IsVisible="False" Width="7" Height="2" CornerRadius="1" Background="{DynamicResource ChAccentBrush}"/>
+            </Panel>
+          </Border>
+          <ContentPresenter x:Name="PART_ContentPresenter" Grid.Column="1" Margin="{TemplateBinding Padding}"
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}" RecognizesAccessKey="True"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:checked /template/ Border#PART_Box"><Setter Property="Background" Value="{DynamicResource ChAccentGelBrush}"/><Setter Property="BoxShadow" Value="{DynamicResource ChCheckOnShadow}"/></Style>
+    <Style Selector="^:checked /template/ Path#PART_Check"><Setter Property="IsVisible" Value="True"/></Style>
+    <Style Selector="^:indeterminate /template/ Border#PART_Dash"><Setter Property="IsVisible" Value="True"/></Style>
+    <Style Selector="^:focus-visible /template/ Border#PART_Box"><Setter Property="BoxShadow" Value="{DynamicResource ChFocusRingShadow}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+    <Style Selector="^:disabled /template/ Border#PART_Box"><Setter Property="Opacity" Value="0.5"/></Style>
+  </ControlTheme>
+
+  <!-- ===== RadioButton ===== -->
+  <ControlTheme x:Key="{x:Type RadioButton}" TargetType="RadioButton">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Padding" Value="8,0,0,0"/>
+    <Setter Property="MinHeight" Value="22"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="15,*" Background="{TemplateBinding Background}">
+          <Border x:Name="PART_Box" Width="15" Height="15" CornerRadius="999" VerticalAlignment="Center"
+                  Background="{DynamicResource ChDishCheckBrush}" BoxShadow="{DynamicResource ChElevSunkenSm}">
+            <Border x:Name="PART_Dot" IsVisible="False" Width="5" Height="5" CornerRadius="999" Background="White" BoxShadow="0 0 2 0 #66000000"/>
+          </Border>
+          <ContentPresenter x:Name="PART_ContentPresenter" Grid.Column="1" Margin="{TemplateBinding Padding}"
+                            Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Foreground="{TemplateBinding Foreground}" RecognizesAccessKey="True"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:checked /template/ Border#PART_Box"><Setter Property="Background" Value="{DynamicResource ChAccentGelBrush}"/><Setter Property="BoxShadow" Value="{DynamicResource ChCheckOnShadow}"/></Style>
+    <Style Selector="^:checked /template/ Border#PART_Dot"><Setter Property="IsVisible" Value="True"/></Style>
+    <Style Selector="^:focus-visible /template/ Border#PART_Box"><Setter Property="BoxShadow" Value="{DynamicResource ChFocusRingShadow}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Foreground" Value="{DynamicResource ChTextDisabledBrush}"/></Style>
+    <Style Selector="^:disabled /template/ Border#PART_Box"><Setter Property="Opacity" Value="0.5"/></Style>
+  </ControlTheme>
+
+  <!-- ===== ToggleSwitch: 38x21 sunken track, gel knob; on = accent gel track ===== -->
+  <ControlTheme x:Key="{x:Type ToggleSwitch}" TargetType="ToggleSwitch">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="MinHeight" Value="22"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="KnobTransitions">
+      <Transitions>
+        <DoubleTransition Property="Canvas.Left" Duration="0:0:0.12" Easing="CubicEaseOut"/>
+      </Transitions>
+    </Setter>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="38,Auto" Background="{TemplateBinding Background}">
+          <Panel x:Name="SwitchAreaGrid" Width="38" Height="21" VerticalAlignment="Center">
+            <Border x:Name="OuterBorder" CornerRadius="999" Background="{DynamicResource ChDishWellBrush}" BoxShadow="{DynamicResource ChElevSunkenSm}"/>
+            <Border x:Name="SwitchKnobBounds" CornerRadius="999" Opacity="0" Background="{DynamicResource ChAccentGelBrush}" BoxShadow="{DynamicResource ChSwitchOnShadow}"/>
+            <Canvas x:Name="PART_SwitchKnob" Margin="2" Width="17" Height="17" HorizontalAlignment="Left">
+              <Panel x:Name="PART_MovingKnobs" Width="17" Height="17">
+                <Border x:Name="SwitchKnob" CornerRadius="999" Background="{DynamicResource ChKnobBrush}" BoxShadow="{DynamicResource ChKnobShadow}"/>
+              </Panel>
+            </Canvas>
+          </Panel>
+          <Panel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+            <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                              Foreground="{TemplateBinding Foreground}" RecognizesAccessKey="True"/>
+            <ContentPresenter x:Name="PART_OffContentPresenter" IsVisible="False" Content="{TemplateBinding OffContent}" Foreground="{TemplateBinding Foreground}"/>
+            <ContentPresenter x:Name="PART_OnContentPresenter" IsVisible="False" Content="{TemplateBinding OnContent}" Foreground="{TemplateBinding Foreground}"/>
+          </Panel>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter:empty"><Setter Property="IsVisible" Value="False"/></Style>
+    <Style Selector="^:checked /template/ ContentPresenter#PART_OnContentPresenter"><Setter Property="IsVisible" Value="True"/></Style>
+    <Style Selector="^:unchecked /template/ ContentPresenter#PART_OffContentPresenter"><Setter Property="IsVisible" Value="True"/></Style>
+    <Style Selector="^:checked /template/ Border#SwitchKnobBounds"><Setter Property="Opacity" Value="1"/></Style>
+    <Style Selector="^:checked /template/ Panel#PART_MovingKnobs"><Setter Property="Canvas.Left" Value="17"/></Style>
+    <Style Selector="^:unchecked /template/ Panel#PART_MovingKnobs"><Setter Property="Canvas.Left" Value="0"/></Style>
+    <Style Selector="^:focus-visible /template/ Border#OuterBorder"><Setter Property="BoxShadow" Value="{DynamicResource ChFocusRingShadow}"/></Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5"/></Style>
+  </ControlTheme>
+
+  <!-- ===== Slider ===== -->
+  <ControlTheme x:Key="ChSliderThumb" TargetType="Thumb">
+    <Setter Property="Width" Value="16"/>
+    <Setter Property="Height" Value="16"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_Knob" CornerRadius="999" Background="{DynamicResource ChThumbBrush}" BoxShadow="{DynamicResource ChKnobShadow}"/>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Border#PART_Knob"><Setter Property="BoxShadow" Value="{DynamicResource ChThumbHoverShadow}"/></Style>
+    <Style Selector="^:pressed /template/ Border#PART_Knob"><Setter Property="BoxShadow" Value="{DynamicResource ChThumbHoverShadow}"/></Style>
+  </ControlTheme>
+  <ControlTheme x:Key="ChSliderFill" TargetType="RepeatButton">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Border x:Name="PART_Fill" Height="6" Margin="0,0,-8,0" CornerRadius="3,0,0,3" VerticalAlignment="Center" Background="{DynamicResource ChAccentBrush}"
+                  BoxShadow="inset 0 1 2 0 #40000000"/>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="ChSliderFillV" TargetType="RepeatButton">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Background="Transparent">
+          <Border Width="6" Margin="0,-8,0,0" CornerRadius="0,0,3,3" HorizontalAlignment="Center" Background="{DynamicResource ChAccentBrush}"
+                  BoxShadow="inset 1 0 2 0 #40000000"/>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+  <ControlTheme x:Key="ChSliderBlank" TargetType="RepeatButton">
+    <Setter Property="Focusable" Value="False"/>
+    <Setter Property="Template"><ControlTemplate><Border Background="Transparent"/></ControlTemplate></Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type Slider}" TargetType="Slider">
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Style Selector="^:horizontal">
+      <Setter Property="MinHeight" Value="20"/>
+      <Setter Property="MinWidth" Value="60"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid Height="20">
+            <Border x:Name="TrackBackground" Height="6" CornerRadius="999" VerticalAlignment="Center"
+                    Background="{DynamicResource ChDishWellBrush}" BoxShadow="{DynamicResource ChElevSunkenSm}"/>
+            <Track x:Name="PART_Track" Orientation="Horizontal" ClipToBounds="False"
+                   Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}" IsDirectionReversed="{TemplateBinding IsDirectionReversed}">
+              <Track.DecreaseButton><RepeatButton x:Name="PART_DecreaseButton" Theme="{StaticResource ChSliderFill}"/></Track.DecreaseButton>
+              <Track.IncreaseButton><RepeatButton x:Name="PART_IncreaseButton" Theme="{StaticResource ChSliderBlank}"/></Track.IncreaseButton>
+              <Thumb x:Name="thumb" Theme="{StaticResource ChSliderThumb}"/>
+            </Track>
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="^:vertical">
+      <Setter Property="MinWidth" Value="20"/>
+      <Setter Property="MinHeight" Value="60"/>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Grid Width="20">
+            <Border x:Name="TrackBackground" Width="6" CornerRadius="999" HorizontalAlignment="Center"
+                    Background="{DynamicResource ChDishWellBrush}" BoxShadow="{DynamicResource ChElevSunkenSm}"/>
+            <Track x:Name="PART_Track" Orientation="Vertical" ClipToBounds="False" IsDirectionReversed="True"
+                   Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}"
+                   Value="{TemplateBinding Value, Mode=TwoWay}">
+              <Track.DecreaseButton><RepeatButton x:Name="PART_DecreaseButton" Theme="{StaticResource ChSliderFillV}"/></Track.DecreaseButton>
+              <Track.IncreaseButton><RepeatButton x:Name="PART_IncreaseButton" Theme="{StaticResource ChSliderBlank}"/></Track.IncreaseButton>
+              <Thumb x:Name="thumb" Theme="{StaticResource ChSliderThumb}"/>
+            </Track>
+          </Grid>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="^:disabled"><Setter Property="Opacity" Value="0.5"/></Style>
+  </ControlTheme>
+
+  <!-- ===== ProgressBar: Aqua candy-stripe gel in a sunken trough (stripes static) ===== -->
+  <ControlTheme x:Key="{x:Type ProgressBar}" TargetType="ProgressBar">
+    <Setter Property="MinHeight" Value="14"/>
+    <Setter Property="MinWidth" Value="60"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="Background" Value="{DynamicResource ChDishWellBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChProgressBarBrush}"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="ProgressBarRoot" CornerRadius="999" Padding="1" Background="{TemplateBinding Background}" BoxShadow="{DynamicResource ChElevSunkenSm}">
+          <Panel>
+            <Border x:Name="PART_Indicator" CornerRadius="999" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                    Background="{TemplateBinding Foreground}" BoxShadow="{DynamicResource ChProgressShadow}">
+              <Border CornerRadius="999" Background="{DynamicResource ChStripeBrush}"/>
+            </Border>
+            <Border x:Name="IndeterminateRoot" IsVisible="False" CornerRadius="999"
+                    Background="{TemplateBinding Foreground}" BoxShadow="{DynamicResource ChProgressShadow}">
+              <Border CornerRadius="999" Background="{DynamicResource ChStripeBrush}"/>
+            </Border>
+          </Panel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:vertical /template/ Border#PART_Indicator"><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="VerticalAlignment" Value="Bottom"/></Style>
+    <Style Selector="^:vertical"><Setter Property="MinWidth" Value="14"/><Setter Property="MinHeight" Value="60"/></Style>
+    <Style Selector="^:indeterminate /template/ Border#PART_Indicator"><Setter Property="IsVisible" Value="False"/></Style>
+    <Style Selector="^:indeterminate /template/ Border#IndeterminateRoot"><Setter Property="IsVisible" Value="True"/></Style>
+    <Style Selector="^.success"><Setter Property="Foreground" Value="{DynamicResource ChProgressSuccessBrush}"/></Style>
+  </ControlTheme>
+
+</Styles.Resources>
+</Styles>

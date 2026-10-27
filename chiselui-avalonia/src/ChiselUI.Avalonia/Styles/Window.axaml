@@ -1,0 +1,119 @@
+<!-- GlassFrame (window body) and ChiselWindow (real window chrome) -->
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:ChiselUI.Avalonia.Controls">
+<Styles.Resources>
+
+  <ControlTheme x:Key="{x:Type c:GlassFrame}" TargetType="c:GlassFrame">
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource ChSurfaceBaseBrush}"/>
+    <Setter Property="CornerRadius" Value="14"/>
+    <Setter Property="ClipToBounds" Value="False"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <!-- the frosted slab: 10px frame + 3px accent depth band (outer shadow) + glow + drop -->
+          <Border x:Name="PART_Slab" Background="{DynamicResource ChGlassFrameBrush}" CornerRadius="{TemplateBinding CornerRadius}"
+                  BoxShadow="{DynamicResource ChGlassFrameShadow}" IsHitTestVisible="False"/>
+          <DockPanel>
+            <Grid x:Name="PART_TitleBar" DockPanel.Dock="Top" Height="32" Background="Transparent" Margin="16,0,10,0"
+                  ColumnDefinitions="Auto,*,Auto,Auto">
+              <ContentPresenter x:Name="PART_Icon" Content="{TemplateBinding Icon}" VerticalAlignment="Center" Margin="0,0,8,0"
+                                Foreground="{DynamicResource ChGlassTextBrush}"
+                                IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+              <TextBlock x:Name="PART_Title" Grid.Column="1" Text="{TemplateBinding Title}" VerticalAlignment="Center"
+                         FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource ChGlassTextBrush}" TextTrimming="CharacterEllipsis"/>
+              <ContentPresenter x:Name="PART_TitleBarContent" Grid.Column="2" Content="{TemplateBinding TitleBarContent}" VerticalAlignment="Center" Margin="8,0,10,0"/>
+              <!-- Vista/7 joined caption capsule: shadow layer + clipped buttons layer -->
+              <Panel x:Name="PART_Captions" Grid.Column="3" VerticalAlignment="Top" IsVisible="{TemplateBinding ShowCaptionButtons}">
+                <Border CornerRadius="0,0,6,6" BoxShadow="{DynamicResource ChCaptionGroupShadow}" Background="#01000000"/>
+                <Border CornerRadius="0,0,6,6" ClipToBounds="True">
+                  <StackPanel Orientation="Horizontal">
+                    <Button x:Name="PART_Minimize" Theme="{DynamicResource ChCaptionButton}" Classes="first" IsVisible="{TemplateBinding ShowMinMax}">
+                      <Path Data="M1,7.5 L9,7.5" Stroke="White" StrokeThickness="1.6" Width="10" Height="10"/>
+                    </Button>
+                    <Button x:Name="PART_Maximize" Theme="{DynamicResource ChCaptionButton}" IsVisible="{TemplateBinding ShowMinMax}">
+                      <Panel>
+                        <Path x:Name="MaxGlyph" Data="M1.5,1.5 L8.5,1.5 L8.5,8.5 L1.5,8.5 Z" Stroke="White" StrokeThickness="1.4" Width="10" Height="10"/>
+                        <Path x:Name="RestoreGlyph" Data="M1.5,3.5 L6.5,3.5 L6.5,8.5 L1.5,8.5 Z M3.5,3.5 L3.5,1.5 L8.5,1.5 L8.5,6.5 L6.5,6.5" Stroke="White" StrokeThickness="1.3" Width="10" Height="10" IsVisible="False"/>
+                      </Panel>
+                    </Button>
+                    <Button x:Name="PART_Close" Theme="{DynamicResource ChCaptionButton}" Classes="close">
+                      <Path Data="M1.5,1.5 L8.5,8.5 M8.5,1.5 L1.5,8.5" Stroke="White" StrokeThickness="1.7" StrokeLineCap="Round" Width="10" Height="10"/>
+                    </Button>
+                  </StackPanel>
+                </Border>
+              </Panel>
+            </Grid>
+            <!-- opaque client lifted off the frame: shadow layer + clipped content layer -->
+            <Panel x:Name="PART_ClientHost" Margin="10,0,10,10">
+              <Border x:Name="PART_ClientLift" Background="{TemplateBinding Background}" CornerRadius="6" BoxShadow="{DynamicResource ChContentLift}"/>
+              <Border x:Name="PART_Client" CornerRadius="6" ClipToBounds="True">
+                <ContentPresenter x:Name="PART_ContentPresenter" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Padding="{TemplateBinding Padding}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+              </Border>
+            </Panel>
+          </DockPanel>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^.glass /template/ Border#PART_Slab"><Setter Property="Background" Value="{DynamicResource ChGlassFrameTintBrush}"/></Style>
+    <Style Selector="^:dialog"><Setter Property="Background" Value="{DynamicResource ChClientDialogBrush}"/></Style>
+    <Style Selector="^:dialog /template/ Border#PART_Slab"><Setter Property="BoxShadow" Value="{DynamicResource ChGlassFrameShadow4}"/></Style>
+    <Style Selector="^.lite /template/ Border#PART_Slab"><Setter Property="BoxShadow" Value="{DynamicResource ChGlassFrameShadowLite}"/></Style>
+    <Style Selector="^:inactive /template/ Grid#PART_TitleBar"><Setter Property="Opacity" Value="0.78"/></Style>
+    <Style Selector="^:maximized /template/ Path#MaxGlyph"><Setter Property="IsVisible" Value="False"/></Style>
+    <Style Selector="^:maximized /template/ Path#RestoreGlyph"><Setter Property="IsVisible" Value="True"/></Style>
+    <!-- real window chrome: square slab (Win11 DWM rounds the corners), depth band drawn inside, no outer shadow -->
+    <Style Selector="^:chrome"><Setter Property="CornerRadius" Value="0"/></Style>
+    <Style Selector="^:chrome /template/ Border#PART_Slab">
+      <Setter Property="Background" Value="{DynamicResource ChGlassFrameFallbackBrush}"/>
+      <Setter Property="BoxShadow" Value="{DynamicResource ChWindowChromeShadow}"/>
+    </Style>
+    <Style Selector="^:chrome:glass /template/ Border#PART_Slab"><Setter Property="Background" Value="{DynamicResource ChGlassFrameAcrylicBrush}"/></Style>
+    <Style Selector="^:chrome /template/ Panel#PART_ClientHost"><Setter Property="Margin" Value="10,0,10,13"/></Style>
+    <Style Selector="^:chrome:maximized /template/ Panel#PART_ClientHost"><Setter Property="Margin" Value="4,0,4,4"/></Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="ChResizeGrip" TargetType="Border">
+    <Setter Property="Background" Value="#01000000"/>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type c:ChiselWindow}" TargetType="c:ChiselWindow">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="TransparencyBackgroundFallback" Value="{DynamicResource ChSurfaceBaseBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+    <Setter Property="FontFamily" Value="{DynamicResource ChFontSans}"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel Margin="{TemplateBinding OffScreenMargin}">
+          <Border Background="{TemplateBinding Background}" IsHitTestVisible="False"/>
+          <VisualLayerManager>
+            <c:GlassFrame x:Name="PART_Frame" Title="{TemplateBinding Title}" Icon="{TemplateBinding IconContent}"
+                          TitleBarContent="{TemplateBinding TitleBarContent}" IsDialog="{TemplateBinding IsDialogFrame}"
+                          ShowMinMax="{TemplateBinding CanResize}"
+                          Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                          Padding="{TemplateBinding Padding}"/>
+          </VisualLayerManager>
+          <!-- resize grips (only active in Normal state, see ChiselWindow.cs) -->
+          <Border x:Name="PART_ResizeN" Theme="{StaticResource ChResizeGrip}" Height="4" VerticalAlignment="Top" Margin="10,0,90,0" Cursor="TopSide"/>
+          <Border x:Name="PART_ResizeS" Theme="{StaticResource ChResizeGrip}" Height="6" VerticalAlignment="Bottom" Margin="10,0" Cursor="BottomSide"/>
+          <Border x:Name="PART_ResizeW" Theme="{StaticResource ChResizeGrip}" Width="6" HorizontalAlignment="Left" Margin="0,10" Cursor="LeftSide"/>
+          <Border x:Name="PART_ResizeE" Theme="{StaticResource ChResizeGrip}" Width="6" HorizontalAlignment="Right" Margin="0,24,0,10" Cursor="RightSide"/>
+          <Border x:Name="PART_ResizeNW" Theme="{StaticResource ChResizeGrip}" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="TopLeftCorner"/>
+          <Border x:Name="PART_ResizeNE" Theme="{StaticResource ChResizeGrip}" Width="4" Height="4" HorizontalAlignment="Right" VerticalAlignment="Top" Cursor="TopRightCorner"/>
+          <Border x:Name="PART_ResizeSW" Theme="{StaticResource ChResizeGrip}" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Cursor="BottomLeftCorner"/>
+          <Border x:Name="PART_ResizeSE" Theme="{StaticResource ChResizeGrip}" Width="12" Height="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="BottomRightCorner"/>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^[WindowState=Maximized] /template/ Border#PART_ResizeN, ^[WindowState=Maximized] /template/ Border#PART_ResizeS, ^[WindowState=Maximized] /template/ Border#PART_ResizeW, ^[WindowState=Maximized] /template/ Border#PART_ResizeE, ^[WindowState=Maximized] /template/ Border#PART_ResizeNW, ^[WindowState=Maximized] /template/ Border#PART_ResizeNE, ^[WindowState=Maximized] /template/ Border#PART_ResizeSW, ^[WindowState=Maximized] /template/ Border#PART_ResizeSE">
+      <Setter Property="IsVisible" Value="False"/>
+    </Style>
+  </ControlTheme>
+
+</Styles.Resources>
+</Styles>

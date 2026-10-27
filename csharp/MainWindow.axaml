@@ -1,0 +1,175 @@
+<c:ChiselWindow xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:c="using:ChiselUI.Avalonia.Controls"
+                xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+                xmlns:local="using:TextPlus2"
+                x:Class="TextPlus2.MainWindow"
+                Title="TextPlus2 - Untitled"
+                Width="960"
+                Height="640"
+                MinWidth="480"
+                MinHeight="320"
+                Icon="avares://TextPlus2/Assets/TextPlus2Logo.ico">
+  <c:ChiselWindow.Resources>
+    <!-- Static SemiBold. The bundled variable face ignores FontWeight, and a synthetic bold is blurrier. -->
+    <FontFamily x:Key="EditorFont">avares://TextPlus2/Assets/Fonts#JetBrains Mono</FontFamily>
+  </c:ChiselWindow.Resources>
+  <c:ChiselWindow.IconContent>
+    <Image Width="22" Height="22" Source="avares://TextPlus2/Assets/TextPlus2Logo.png"/>
+  </c:ChiselWindow.IconContent>
+  <c:ChiselWindow.Styles>
+    <!-- The document sits in the editor dish. The control stays transparent so the dish shows through. -->
+    <Style Selector="Border.editor ae|TextEditor">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
+      <Setter Property="FontFamily" Value="{StaticResource EditorFont}"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style Selector="Border.editor ae|TextEditor /template/ ScrollViewer#PART_ScrollViewer">
+      <Setter Property="Padding" Value="0,8,10,8"/>
+    </Style>
+    <Style Selector="GridSplitter#FileTreeSplitter">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Cursor" Value="SizeWestEast"/>
+    </Style>
+    <Style Selector="GridSplitter#FileTreeSplitter:pointerover">
+      <Setter Property="Background" Value="{DynamicResource ChAccentBrush}"/>
+    </Style>
+    <!-- A directory keeps one unrealized child so the twisty stays. That row is not a file. -->
+    <Style Selector="TreeView#Files TreeViewItem">
+      <Setter Property="IsVisible" Value="{Binding !IsPlaceholder}"/>
+      <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+    </Style>
+  </c:ChiselWindow.Styles>
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Classes="chrome">
+      <DockPanel>
+        <Button Name="ThemeButton" DockPanel.Dock="Right" Classes="sm" Click="Theme_Click"
+                AutomationProperties.Name="Theme" VerticalAlignment="Center" Margin="8,3" MinWidth="76">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Path Width="11" Height="11" Stretch="Uniform" Fill="{DynamicResource ChTextBrush}"
+                  Data="M6,0 A6,6 0 1 0 12,7 A4.6,4.6 0 1 1 6,0 Z"/>
+            <TextBlock Name="ThemeLabel" Text="Light"/>
+          </StackPanel>
+        </Button>
+        <Menu>
+          <MenuItem Header="_File">
+            <MenuItem Header="_New" HotKey="Ctrl+N" Click="New_Click" />
+            <MenuItem Header="_Open..." HotKey="Ctrl+O" Click="Open_Click" />
+            <MenuItem Header="Open _Folder..." Click="OpenFolder_Click" AutomationProperties.Name="Open Folder" />
+            <MenuItem Header="_Save" HotKey="Ctrl+S" Click="Save_Click" />
+            <MenuItem Header="Save _As..." HotKey="Ctrl+Shift+S" Click="SaveAs_Click" />
+            <MenuItem Header="_Close" HotKey="Ctrl+W" Click="Close_Click" />
+            <Separator />
+            <MenuItem Header="E_xit" Click="Exit_Click" />
+          </MenuItem>
+          <MenuItem Header="_Edit">
+            <MenuItem Header="_Undo" Click="Undo_Click" />
+            <MenuItem Header="_Redo" Click="Redo_Click" />
+            <Separator />
+            <MenuItem Header="Cu_t" Click="Cut_Click" />
+            <MenuItem Header="_Copy" Click="Copy_Click" />
+            <MenuItem Header="_Paste" Click="Paste_Click" />
+            <MenuItem Header="Select _All" Click="SelectAll_Click" />
+            <Separator />
+            <MenuItem Header="_Find" HotKey="Ctrl+F" Click="Find_Click" />
+            <MenuItem Header="Find _Next" HotKey="F3" Click="FindNext_Click" />
+          </MenuItem>
+          <MenuItem Header="_View">
+            <MenuItem Header="Zoom _In" HotKey="Ctrl+OemPlus" InputGesture="Ctrl+OemPlus" Click="ZoomIn_Click" />
+            <MenuItem Header="Zoom _Out" HotKey="Ctrl+OemMinus" InputGesture="Ctrl+OemMinus" Click="ZoomOut_Click" />
+            <MenuItem Header="_Reset Zoom" HotKey="Ctrl+D0" InputGesture="Ctrl+D0" Click="ZoomReset_Click" />
+            <Separator />
+            <MenuItem Name="FileTreeMenuItem" Header="File _Tree" IsChecked="True" ToggleType="CheckBox"
+                      HotKey="Ctrl+B" InputGesture="Ctrl+B" Click="FileTree_Click"
+                      AutomationProperties.Name="File Tree" />
+            <MenuItem Name="FollowOpenFileMenuItem" Header="Follow Open _File" IsChecked="False" ToggleType="CheckBox"
+                      Click="FollowOpenFile_Click" AutomationProperties.Name="Follow Open File"
+                      ToolTip.Tip="When checked, opening a file switches the tree to that file's folder." />
+            <Separator />
+            <MenuItem Name="WordWrapMenuItem" Header="_Word Wrap" IsChecked="False" ToggleType="CheckBox"
+                      Click="WordWrap_Click" AutomationProperties.Name="Word Wrap" />
+            <Separator />
+            <MenuItem Name="ThemeMenuItem" Header="Switch to _Light" Click="Theme_Click" />
+          </MenuItem>
+        </Menu>
+      </DockPanel>
+    </Border>
+
+    <Grid DockPanel.Dock="Bottom" Margin="8,0,8,8" ColumnDefinitions="Auto,*,Auto,Auto,2*" ColumnSpacing="4">
+      <Border Classes="statuscell">
+        <TextBlock Name="CaretText" Text="Ln 1, Col 1" VerticalAlignment="Center"/>
+      </Border>
+      <Border Grid.Column="1" Classes="statuscell">
+        <TextBlock Name="NameText" Text="Untitled" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+      </Border>
+      <Border Grid.Column="2" Classes="statuscell">
+        <TextBlock Name="StateText" Text="Saved" VerticalAlignment="Center"/>
+      </Border>
+      <Border Name="ZoomCell" Grid.Column="3" Classes="statuscell">
+        <TextBlock Name="ZoomText" Text="100%" VerticalAlignment="Center"/>
+      </Border>
+      <Border Grid.Column="4" Classes="statuscell">
+        <TextBlock Name="StatusText" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+      </Border>
+    </Grid>
+
+    <Border Name="FindBar" DockPanel.Dock="Top" Classes="toolbar" IsVisible="False" Margin="8,8,8,0">
+      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+        <TextBox Name="FindBox" Watermark="Find" Width="280" KeyDown="FindBox_KeyDown" />
+        <Button Classes="sm" Content="Next" Click="FindNext_Click" />
+        <Button Classes="sm" Content="Close" Click="CloseFind_Click" />
+      </StackPanel>
+    </Border>
+
+    <Grid Name="Workspace" Margin="8">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="220" MinWidth="120"/>
+        <ColumnDefinition Width="6"/>
+        <ColumnDefinition Width="*" MinWidth="160"/>
+      </Grid.ColumnDefinitions>
+      <Border Name="FileTreeHost" Classes="dock" ClipToBounds="True">
+        <DockPanel>
+          <Border DockPanel.Dock="Top" Classes="dockheader">
+            <TextBlock Name="FileTreeTitle" Text="Files" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                       TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+          </Border>
+          <TreeView Name="Files" Background="Transparent" AutomationProperties.Name="File tree">
+            <TreeView.DataTemplates>
+              <TreeDataTemplate DataType="local:FileTreeNode" ItemsSource="{Binding Children}">
+                <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding FullPath}"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"
+                           AutomationProperties.Name="{Binding Name}"/>
+              </TreeDataTemplate>
+            </TreeView.DataTemplates>
+          </TreeView>
+        </DockPanel>
+      </Border>
+      <GridSplitter Name="FileTreeSplitter" Grid.Column="1" ResizeDirection="Columns"/>
+      <TabControl Name="Documents" Grid.Column="2" Classes="doc"
+                  SelectionChanged="Documents_SelectionChanged"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                  AutomationProperties.Name="Documents"/>
+      <Border Name="EditorHost" Grid.Column="2" Classes="editor">
+        <ae:TextEditor Name="Editor"
+                       ShowLineNumbers="True"
+                       WordWrap="False"
+                       Focusable="True"
+                       FontFamily="{StaticResource EditorFont}"
+                       FontWeight="SemiBold"
+                       FontSize="15"
+                       Background="Transparent"
+                       Foreground="{DynamicResource ChTextBrush}"
+                       LineNumbersForeground="{DynamicResource ChTextMutedBrush}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch">
+          <ae:TextEditor.Options>
+            <ae:TextEditorOptions HighlightCurrentLine="False" EnableHyperlinks="False"/>
+          </ae:TextEditor.Options>
+        </ae:TextEditor>
+      </Border>
+    </Grid>
+  </DockPanel>
+</c:ChiselWindow>
