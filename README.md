@@ -53,26 +53,6 @@ A long line stays one line in the file. With word wrap on, line 3 folds inside t
 
 Undo, redo, cut, copy, paste, and select all use the usual editor shortcuts.
 
-## Run
-
-The current version is **26_1.0.0**. The app targets .NET 10. From the repo root:
-
-```powershell
-dotnet run --project csharp
-```
-
-`run-csharp.ps1` does the same thing and forwards arguments.
-
-```powershell
-dotnet run --project csharp -- path\to\file.txt
-dotnet run --project csharp -- path\to\folder
-```
-
-`build-release.ps1` writes self-contained Windows and Linux builds to `releases/`. That folder stays on your machine. The Windows executable is over GitHub's 100 MiB file limit, so the builds are not in this repository. On Linux, mark the binary executable if the file system did not: `chmod +x TextPlus2`.
-
-Pass a file to open it, or a folder to root the file tree there.
-
-The interface is [ChiselUI](chiselui-avalonia/README.md). The editor is AvaloniaEdit with TextMate grammars, and the editor face is JetBrains Mono SemiBold.
 
 ## This release leaves out
 
