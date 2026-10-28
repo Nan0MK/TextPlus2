@@ -4,9 +4,9 @@
   <img src="resources/TextPlus2Logo.png" width="112" alt="TextPlus2 logo">
 </p>
 
-A small text editor for Windows and Linux, and the successor to [TextPlus](https://github.com/Nan0MK/TextPlus).
+A small, simple text editor, that looks good.
 
-TextPlus2 keeps several files open in tabs, colors source from the file extension, and shows a file tree beside the editor. The window follows the system theme at startup. Light and dark can be switched for the rest of the session.
+The successor to [TextPlus](https://github.com/Nan0MK/TextPlus).
 
 <p align="center">
   <img src="docs/images/editing-dark.png" alt="TextPlus2 in the dark theme. Editor.cs is colored, Guide.md and notes.txt are open in tabs, and the Workbench folder is listed in the file tree.">
@@ -14,13 +14,12 @@ TextPlus2 keeps several files open in tabs, colors source from the file extensio
 
 ## Features
 
-- Syntax highlighting chosen from the file extension. An unknown extension stays plain text.
-- Markdown stays in the editor. The markdown grammar colors headings, code, and links in the source.
-- Document tabs. Each tab keeps its own text, undo stack, and caret.
-- A file tree. A click opens a file. Open Folder sets the root and leaves the current document alone.
-- Find and Find Next.
-- Line numbers, zoom from 50% to 300%, and word wrap.
-- Light and dark themes, and the app icon in the title bar and on the Windows executable.
+- Syntax highlighting.
+- Tabs.
+- A file tree.
+- Word Wrap.
+- Light and dark modes.
+- Standard editing capabilities.
 
 ### Markdown
 
@@ -68,7 +67,7 @@ dotnet run --project csharp -- path\to\file.txt
 dotnet run --project csharp -- path\to\folder
 ```
 
-`build-release.ps1` writes self-contained Windows and Linux builds to `releases/`. That folder stays on your machine. The Windows executable is over GitHub's 100 MiB file limit, so the builds are not in this repository. On Linux, mark the binary executable if the file system did not: `chmod +x TextPlus2`.
+`build-release.ps1 -Version 26_1.0.0` writes self-contained Windows and Linux builds to `releases/`. That folder stays on your machine. The Windows executable is over GitHub's 100 MiB file limit, so the builds are not in this repository. `publish-release.ps1 -Version 26_1.0.0` uploads a built folder to a GitHub Release. On Linux, mark the binary executable if the file system did not: `chmod +x TextPlus2`.
 
 Pass a file to open it, or a folder to root the file tree there.
 

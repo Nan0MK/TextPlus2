@@ -2,7 +2,7 @@
 
 Read this before changing the app. `TextPlus2.md` is the product brief. Leave it unchanged. `README.md` is the GitHub page. Its screenshots in `docs/images/` were captured from the 26_1.0.0 Windows build. `csharp/README.md` is the short build note.
 
-The workspace `C:\DEV\LOCAL2\TextPlus2` is not a git repo. The C# app in `csharp/` is the product. The Odin bake-off is gone from the tree. Do not recreate `odin/`. `run-odin.ps1` is leftover. Leave it unless asked.
+The C# app in `csharp/` is the product. The repo remote is `https://github.com/Nan0MK/TextPlus2.git` on `master`. The Odin bake-off is gone from the tree. Do not recreate `odin/`. `run-odin.ps1` is leftover. Leave it unless asked.
 
 ## Run and build
 
@@ -18,9 +18,47 @@ dotnet build csharp\TextPlus2.csproj --nologo
 
 The last verified build was `csharp\bin\Debug\net10.0\TextPlus2.dll`, 0 warnings. If `TextPlus2.exe` is locked, build to another `-o` folder. Do not kill a TextPlus2 process you did not start.
 
-`releases/` is gitignored. The Windows builds are over GitHub's 100 MiB limit, so they are not in the repository. Release `26_1.0.0` is the current self-contained drop in `releases/26_1.0.0/` on a machine that has built it. `build-release.ps1` republishes that version. The assembly file version is `26.1.0.0` and the product version is `26_1.0.0`. The Windows exe was started and showed `TextPlus2 - Untitled`, with the logo, the drives tree, and an Untitled tab. The Linux file is an ELF binary and was not run here. `releases/26_0.0.0` remains. That cut was built before the logo.
+`releases/` is gitignored. Do not commit it, and do not add a blanket `*.exe` or `*.dll` rule. The Windows executable is over GitHub's 100 MiB limit, so binaries go up as GitHub Release assets. How to build and publish is in the Releases section below.
+
+The current release is `26_1.0.0`. File version `26.1.0.0`, product version `26_1.0.0`. It is published at `https://github.com/Nan0MK/TextPlus2/releases/tag/26_1.0.0` with assets `TextPlus2.exe` and `TextPlus2`. The local drop is `releases/26_1.0.0/`. The Windows exe was started and showed `TextPlus2 - Untitled`, with the logo, the drives tree, and an Untitled tab. The Linux file is an ELF binary and was not run here. `releases/26_0.0.0` remains on disk only. That cut was built before the logo and was not published to GitHub.
 
 Stay on Avalonia 11.3.22. Do not take Avalonia 12 or the AvaloniaEdit 12 packages. `Avalonia.AvaloniaEdit` 11.4.1, `AvaloniaEdit.TextMate` 11.4.1, and `TextMateSharp.Grammars` 2.0.2 are the editor stack. ChiselUI is `chiselui-avalonia/src/ChiselUI.Avalonia`, net8.0. The app is net10.0. A transitive NU1903 on Tmds.DBus.Protocol 0.21.2 is known.
+
+## Releases
+
+Do this only when the user asks. Building and publishing are separate. Never commit `releases/`.
+
+A release name looks like `26_1.0.0`. The assembly version cannot contain `_`. `build-release.ps1` maps that name to `Version` `26.1.0` (a trailing `.0` is stripped), and to `AssemblyVersion` and `FileVersion` `26.1.0.0`. `InformationalVersion` stays `26_1.0.0`. For `26_1.0.1`, `Version`, `AssemblyVersion`, and `FileVersion` are `26.1.0.1`.
+
+### Make a local release
+
+From the repo root:
+
+```powershell
+powershell -File build-release.ps1 -Version 26_1.0.0
+```
+
+With no `-Version`, the script rebuilds the `InformationalVersion` already in `csharp/TextPlus2.csproj`. Passing `-Version` updates the four version properties, then publishes self-contained single-file `win-x64` and `linux-x64` into `releases/<version>/` and writes `NOTES.md`. Re-running deletes only that version's `win-x64` and `linux-x64` folders. Leave older release folders on disk.
+
+The script checks the Windows file version and product version, and checks that the Linux file starts with ELF bytes `7F 45 4C 46`. It does not run the Linux binary. After it exits 0, start `releases/<version>/win-x64/TextPlus2.exe`, confirm the window title is `TextPlus2 - <name>`, then stop only the process you started. Do not kill a TextPlus2 process you did not start. A transparent corner on the extracted exe icon means the logo is embedded.
+
+The version edit in the csproj is source. Commit and push it only when the user asks, and do not include `releases/`.
+
+### Publish a GitHub release
+
+The source commit must already be on the remote. `publish-release.ps1` does not build, commit, or push. It stops if the working tree is dirty or `HEAD` is not `origin/<branch>`.
+
+`gh` has to be logged in. If `gh auth status` fails, start `gh auth login --hostname github.com --git-protocol https --web --skip-ssh-key` and let the user finish the browser code. Do not invent a token. The CLI is installed with `winget install --id GitHub.cli`. This machine's copy is `C:\Program Files\GitHub CLI\gh.exe` when it is not on `PATH`.
+
+```powershell
+powershell -File publish-release.ps1 -Version 26_1.0.0
+```
+
+The script uploads `TextPlus2.exe` and `TextPlus2`. Those are the asset names. A `#label` suffix did not rename them for `26_1.0.0`. The upload is about 200 MB and can take 10 to 20 minutes. Wait for the URL. The script then checks that the release is not a draft and that both asset sizes match the local files.
+
+If `gh` is killed while uploading, a draft can remain. Look with `gh release view <version>`. Do not start a second upload. Delete a draft only when the user agrees.
+
+`26_1.0.0` is already published. Do not publish it again.
 
 ## Where the code lives
 
