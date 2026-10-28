@@ -53,7 +53,3 @@ A long line stays one line in the file. With word wrap on, line 3 folds inside t
 
 Undo, redo, cut, copy, paste, and select all use the usual editor shortcuts.
 
-
-## This release leaves out
-
-Replace, language servers, and a rendered markdown preview. Theme, zoom, the file tree, follow-open-file, and word wrap last for the session only.
