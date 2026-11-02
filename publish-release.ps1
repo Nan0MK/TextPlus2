@@ -65,8 +65,14 @@ if ($LASTEXITCODE -ne 0) {
     throw "gh is not logged in. Run: gh auth login --hostname github.com --git-protocol https --web --skip-ssh-key"
 }
 
-& $gh release view $Version --json url 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) {
+# A missing release writes "release not found" to stderr. In Windows PowerShell
+# that becomes a terminating error when merged with 2>&1, so discard it.
+$previous = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+& $gh release view $Version --json url *> $null
+$releaseExists = $LASTEXITCODE -eq 0
+$ErrorActionPreference = $previous
+if ($releaseExists) {
     throw "GitHub release $Version already exists. Do not upload it again."
 }
 
