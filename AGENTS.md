@@ -20,7 +20,7 @@ The last verified build was `csharp\bin\Debug\net10.0\TextPlus2.dll`, 0 warnings
 
 `releases/` is gitignored. Do not commit it, and do not add a blanket `*.exe` or `*.dll` rule. The Windows executable is over GitHub's 100 MiB limit, so binaries go up as GitHub Release assets. How to build and publish is in the Releases section below.
 
-The current release is `26_1.0.0`. File version `26.1.0.0`, product version `26_1.0.0`. It is published at `https://github.com/Nan0MK/TextPlus2/releases/tag/26_1.0.0` with assets `TextPlus2.exe` and `TextPlus2`. That Windows asset is the old single-file exe. Later Windows releases ship `TextPlus2.msi`, an installer for the self-contained ReadyToRun folder. The local drop is `releases/26_1.0.0/`. The Windows exe was started and showed `TextPlus2 - Untitled`, with the logo, the drives tree, and an Untitled tab. The Linux file is an ELF binary and was not run here. `releases/26_0.0.0` remains on disk only. That cut was built before the logo and was not published to GitHub.
+The current release is `26_1.1.0`. File version `26.1.1.0`, product version `26_1.1.0`. It is published at `https://github.com/Nan0MK/TextPlus2/releases/tag/26_1.1.0` with assets `TextPlus2.msi` (50753536 bytes) and `TextPlus2` (104359129 bytes). The local drop is `releases/26_1.1.0/`. The Windows folder exe was started and showed `TextPlus2 - Untitled`, and the exe icon corner was transparent. The MSI was not installed. The Linux file is an ELF binary and was not run here. `26_1.0.0` remains published as the older single-file `TextPlus2.exe` plus `TextPlus2`. `releases/26_0.0.0` remains on disk only. That cut was built before the logo and was not published to GitHub.
 
 Stay on Avalonia 11.3.22. Do not take Avalonia 12 or the AvaloniaEdit 12 packages. `Avalonia.AvaloniaEdit` 11.4.1, `AvaloniaEdit.TextMate` 11.4.1, and `TextMateSharp.Grammars` 2.0.2 are the editor stack. ChiselUI is `chiselui-avalonia/src/ChiselUI.Avalonia`, net8.0. The app is net10.0. A transitive NU1903 on Tmds.DBus.Protocol 0.21.2 is known.
 
@@ -58,7 +58,7 @@ The script uploads `TextPlus2.msi` and `TextPlus2`. Those are the asset names. `
 
 If `gh` is killed while uploading, a draft can remain. Look with `gh release view <version>`. Do not start a second upload. Delete a draft only when the user agrees.
 
-`26_1.0.0` is already published. Do not publish it again.
+`26_1.0.0` and `26_1.1.0` are already published. Do not publish either again.
 
 ## Where the code lives
 
