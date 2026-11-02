@@ -1,0 +1,53 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <!--
+    UpgradeCode stays fixed so a newer MSI replaces this install.
+    Windows Installer ignores a fourth version field, so the build number
+    carries the patch: 26_1.0.0 is 26.1.0 and 26_1.0.1 is 26.1.1.
+  -->
+  <Package
+    Name="TextPlus2"
+    Manufacturer="Nan0MK"
+    Version="$(var.MsiVersion)"
+    UpgradeCode="97472D53-11D1-46EA-B18B-402CCD3EE02C"
+    Scope="perMachine"
+    Language="1033">
+
+    <MajorUpgrade
+      Schedule="afterInstallInitialize"
+      DowngradeErrorMessage="A newer version of TextPlus2 is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Advertised shortcuts require the icon id to end in .exe. The source file is still the logo. -->
+    <Icon Id="TextPlus2.exe" SourceFile="..\resources\TextPlus2Logo.ico" />
+    <Property Id="ARPPRODUCTICON" Value="TextPlus2.exe" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="TextPlus2">
+        <Component Id="AppExe" Guid="*">
+          <File Id="AppExeFile" Source="$(var.ExePath)" KeyPath="yes" />
+          <Shortcut
+            Id="TextPlus2Start"
+            Directory="ProgramMenuFolder"
+            Name="TextPlus2"
+            Description="TextPlus2"
+            WorkingDirectory="INSTALLFOLDER"
+            Icon="TextPlus2.exe"
+            Advertise="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Main">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="AppExe" />
+    </Feature>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Files Include="!(bindpath.Publish)**">
+        <Exclude Files="!(bindpath.Publish)**\*.pdb" />
+        <Exclude Files="$(var.ExePath)" />
+      </Files>
+    </ComponentGroup>
+  </Package>
+</Wix>

@@ -20,7 +20,7 @@ The last verified build was `csharp\bin\Debug\net10.0\TextPlus2.dll`, 0 warnings
 
 `releases/` is gitignored. Do not commit it, and do not add a blanket `*.exe` or `*.dll` rule. The Windows executable is over GitHub's 100 MiB limit, so binaries go up as GitHub Release assets. How to build and publish is in the Releases section below.
 
-The current release is `26_1.0.0`. File version `26.1.0.0`, product version `26_1.0.0`. It is published at `https://github.com/Nan0MK/TextPlus2/releases/tag/26_1.0.0` with assets `TextPlus2.exe` and `TextPlus2`. The local drop is `releases/26_1.0.0/`. The Windows exe was started and showed `TextPlus2 - Untitled`, with the logo, the drives tree, and an Untitled tab. The Linux file is an ELF binary and was not run here. `releases/26_0.0.0` remains on disk only. That cut was built before the logo and was not published to GitHub.
+The current release is `26_1.0.0`. File version `26.1.0.0`, product version `26_1.0.0`. It is published at `https://github.com/Nan0MK/TextPlus2/releases/tag/26_1.0.0` with assets `TextPlus2.exe` and `TextPlus2`. That Windows asset is the old single-file exe. Later Windows releases ship `TextPlus2.msi`, an installer for the self-contained ReadyToRun folder. The local drop is `releases/26_1.0.0/`. The Windows exe was started and showed `TextPlus2 - Untitled`, with the logo, the drives tree, and an Untitled tab. The Linux file is an ELF binary and was not run here. `releases/26_0.0.0` remains on disk only. That cut was built before the logo and was not published to GitHub.
 
 Stay on Avalonia 11.3.22. Do not take Avalonia 12 or the AvaloniaEdit 12 packages. `Avalonia.AvaloniaEdit` 11.4.1, `AvaloniaEdit.TextMate` 11.4.1, and `TextMateSharp.Grammars` 2.0.2 are the editor stack. ChiselUI is `chiselui-avalonia/src/ChiselUI.Avalonia`, net8.0. The app is net10.0. A transitive NU1903 on Tmds.DBus.Protocol 0.21.2 is known.
 
@@ -28,7 +28,7 @@ Stay on Avalonia 11.3.22. Do not take Avalonia 12 or the AvaloniaEdit 12 package
 
 Do this only when the user asks. Building and publishing are separate. Never commit `releases/`.
 
-A release name looks like `26_1.0.0`. The assembly version cannot contain `_`. `build-release.ps1` maps that name to `Version` `26.1.0` (a trailing `.0` is stripped), and to `AssemblyVersion` and `FileVersion` `26.1.0.0`. `InformationalVersion` stays `26_1.0.0`. For `26_1.0.1`, `Version`, `AssemblyVersion`, and `FileVersion` are `26.1.0.1`.
+A release name looks like `26_1.0.0`. The assembly version cannot contain `_`. `build-release.ps1` maps that name to `Version` `26.1.0` (a trailing `.0` is stripped), and to `AssemblyVersion` and `FileVersion` `26.1.0.0`. `InformationalVersion` stays `26_1.0.0`. For `26_1.0.1`, `Version`, `AssemblyVersion`, and `FileVersion` are `26.1.0.1`. The MSI version uses three fields because Windows Installer ignores a fourth. `26_1.0.0` is `26.1.0`, `26_1.0.1` is `26.1.1`, and `26_1.2.3` is `26.1.2003` (`patch * 1000 + revision`). The WiX upgrade code is `97472D53-11D1-46EA-B18B-402CCD3EE02C`. Do not change it.
 
 ### Make a local release
 
@@ -38,9 +38,9 @@ From the repo root:
 powershell -File build-release.ps1 -Version 26_1.0.0
 ```
 
-With no `-Version`, the script rebuilds the `InformationalVersion` already in `csharp/TextPlus2.csproj`. Passing `-Version` updates the four version properties, then publishes self-contained single-file `win-x64` and `linux-x64` into `releases/<version>/` and writes `NOTES.md`. Re-running deletes only that version's `win-x64` and `linux-x64` folders. Leave older release folders on disk.
+With no `-Version`, the script rebuilds the `InformationalVersion` already in `csharp/TextPlus2.csproj`. Passing `-Version` updates the four version properties, then publishes into `releases/<version>/` and writes `NOTES.md`. Windows is a self-contained ReadyToRun folder, packaged as `TextPlus2.msi` with WiX 6.0.2 (`installer/TextPlus2.wixproj`). WiX 7 stops the build until someone accepts its maintenance-fee EULA. Stay on WiX 6 unless the user accepts that. The MSI installs for all users under Program Files and adds a Start menu shortcut. Linux stays a self-contained single file, `linux-x64/TextPlus2`. Re-running deletes only that version's `win-x64` folder, `linux-x64` folder, and `TextPlus2.msi`. Leave older release folders on disk.
 
-The script checks the Windows file version and product version, and checks that the Linux file starts with ELF bytes `7F 45 4C 46`. It does not run the Linux binary. After it exits 0, start `releases/<version>/win-x64/TextPlus2.exe`, confirm the window title is `TextPlus2 - <name>`, then stop only the process you started. Do not kill a TextPlus2 process you did not start. A transparent corner on the extracted exe icon means the logo is embedded.
+The script checks the Windows file version and product version, checks that the MSI contains `TextPlus2.exe`, `TextPlus2.r2r.dll`, and `libSkiaSharp.dll`, and checks that the Linux file starts with ELF bytes `7F 45 4C 46`. It does not run the Linux binary and it does not install the MSI. After it exits 0, start `releases/<version>/win-x64/TextPlus2.exe`, confirm the window title is `TextPlus2 - <name>`, then stop only the process you started. Do not kill a TextPlus2 process you did not start. A transparent corner on the extracted exe icon means the logo is embedded. Installing the MSI writes to Program Files and needs an administrator. Do that only when the user asks.
 
 The version edit in the csproj is source. Commit and push it only when the user asks, and do not include `releases/`.
 
@@ -54,7 +54,7 @@ The source commit must already be on the remote. `publish-release.ps1` does not 
 powershell -File publish-release.ps1 -Version 26_1.0.0
 ```
 
-The script uploads `TextPlus2.exe` and `TextPlus2`. Those are the asset names. A `#label` suffix did not rename them for `26_1.0.0`. The upload is about 200 MB and can take 10 to 20 minutes. Wait for the URL. The script then checks that the release is not a draft and that both asset sizes match the local files.
+The script uploads `TextPlus2.msi` and `TextPlus2`. Those are the asset names. `26_1.0.0` was uploaded as `TextPlus2.exe` and `TextPlus2` before the installer existed. A `#label` suffix did not rename those assets. The upload can take 10 to 20 minutes. Wait for the URL. The script then checks that the release is not a draft and that both asset sizes match the local files.
 
 If `gh` is killed while uploading, a draft can remain. Look with `gh release view <version>`. Do not start a second upload. Delete a draft only when the user agrees.
 

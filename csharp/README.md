@@ -13,4 +13,4 @@ dotnet run --project csharp -- path\to\file.txt
 dotnet run --project csharp -- path\to\folder
 ```
 
-`build-release.ps1 -Version 26_1.0.0` writes self-contained Windows and Linux builds into `releases/`. That folder is gitignored. `publish-release.ps1` uploads a built folder to a GitHub Release. Steps for both are in the root `AGENTS.md`.
+`build-release.ps1 -Version 26_1.0.0` writes a Windows installer, `TextPlus2.msi`, and a self-contained Linux build into `releases/`. That folder is gitignored. `publish-release.ps1` uploads the built MSI and Linux binary to a GitHub Release. Steps for both are in the root `AGENTS.md`.

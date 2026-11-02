@@ -1,8 +1,11 @@
+using System.Globalization;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Styling;
+using AvaloniaEdit.Editing;
 using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
 
@@ -12,14 +15,19 @@ public partial class MainWindow
 {
     private RegistryOptions? _registryOptions;
     private TextMate.Installation? _highlight;
+    private ThemeName? _appliedTheme;
     private string? _grammarKey;
 
     private void InitHighlighting()
     {
         // A grammar failure should leave the text readable instead of taking the window down.
         TextMate.RegisterExceptionHandler(static _ => { });
-        _registryOptions = new RegistryOptions(EditorThemeName());
+        // One registry for the session. InstallTextMate applies its default theme.
+        // A theme change loads another theme file from this same registry.
+        var theme = EditorThemeName();
+        _registryOptions = new RegistryOptions(theme);
         _highlight = Editor.InstallTextMate(_registryOptions);
+        _appliedTheme = theme;
         Editor.TextChanged += Editor_TextChanged;
         Editor.TextArea.Caret.PositionChanged += (_, _) => UpdateChrome();
         Editor.Loaded += (_, _) =>
@@ -70,10 +78,20 @@ public partial class MainWindow
 
     private void ApplyEditorTheme()
     {
-        if (_highlight == null)
+        if (_highlight == null || _registryOptions == null)
             return;
 
-        _highlight.SetTheme(new RegistryOptions(EditorThemeName()).GetDefaultTheme());
+        var theme = EditorThemeName();
+        if (_appliedTheme != theme)
+        {
+            var raw = _registryOptions.LoadTheme(theme);
+            if (raw != null)
+            {
+                _highlight.SetTheme(raw);
+                _appliedTheme = theme;
+            }
+        }
+
         if (ThemeBrush("ChTextBrush") is IBrush brush)
             Editor.TextArea.CaretBrush = brush;
     }
@@ -83,8 +101,27 @@ public partial class MainWindow
         var font = Editor.FontFamily;
         var size = Editor.FontSize;
         SetFace(Editor.TextArea.TextView, font, size);
+        // The margin measures itself to the digits and draws them flush right. Padding is ignored.
+        var after = DigitWidth(font, size) * 2;
+        var before = size * 0.3;
         foreach (var margin in Editor.TextArea.LeftMargins)
+        {
             SetFace(margin, font, size);
+            if (margin is LineNumberMargin)
+                margin.Margin = new Thickness(before, 0, after, 0);
+        }
+    }
+
+    private static double DigitWidth(FontFamily font, double size)
+    {
+        var text = new FormattedText(
+            "0",
+            CultureInfo.CurrentCulture,
+            FlowDirection.LeftToRight,
+            new Typeface(font, FontStyle.Normal, FontWeight.SemiBold),
+            size,
+            null);
+        return text.Width;
     }
 
     private static void SetFace(Control target, FontFamily font, double size)

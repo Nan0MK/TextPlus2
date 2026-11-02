@@ -4,7 +4,8 @@
 #   powershell -File publish-release.ps1 -Version 26_1.0.0
 #
 # Requires a clean master that matches origin/master, and `gh auth status` logged in.
-# The upload is about 200 MB and can take 10 to 20 minutes. Wait for the URL.
+# The upload can take 10 to 20 minutes. Wait for the URL.
+# Windows asset is TextPlus2.msi. Linux asset is TextPlus2.
 
 param(
     [Parameter(Position = 0)]
@@ -37,7 +38,7 @@ if ($Version -notmatch '^\d+_\d+\.\d+\.\d+$') {
 }
 
 $drop = Join-Path $root "releases\$Version"
-$win = Join-Path $drop "win-x64\TextPlus2.exe"
+$win = Join-Path $drop "TextPlus2.msi"
 $linux = Join-Path $drop "linux-x64\TextPlus2"
 $notesFile = Join-Path $drop "NOTES.md"
 foreach ($path in @($win, $linux, $notesFile)) {
@@ -71,7 +72,6 @@ if ($LASTEXITCODE -eq 0) {
 
 $notes = [IO.File]::ReadAllText($notesFile)
 if ($notes.Length -gt 0 -and [int][char]$notes[0] -eq 0xFEFF) { $notes = $notes.Substring(1) }
-$notes = $notes.Replace('win-x64/TextPlus2.exe', 'TextPlus2.exe')
 $notes = $notes.Replace('linux-x64/TextPlus2', 'TextPlus2')
 $uploadNotes = Join-Path $env:TEMP "textplus2-$Version-notes.md"
 $utf8 = New-Object System.Text.UTF8Encoding $false
@@ -82,12 +82,12 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "gh release create failed." }
 
     $view = & $gh release view $Version --json isDraft,url,assets | ConvertFrom-Json
-    $exe = $view.assets | Where-Object { $_.name -eq 'TextPlus2.exe' } | Select-Object -First 1
+    $exe = $view.assets | Where-Object { $_.name -eq 'TextPlus2.msi' } | Select-Object -First 1
     $elf = $view.assets | Where-Object { $_.name -eq 'TextPlus2' } | Select-Object -First 1
     $winSize = (Get-Item $win).Length
     $linuxSize = (Get-Item $linux).Length
     if ($view.isDraft) { throw "Release $Version is still a draft." }
-    if (-not $exe -or $exe.size -ne $winSize) { throw "Windows asset is missing or the wrong size." }
+    if (-not $exe -or $exe.size -ne $winSize) { throw "Windows MSI is missing or the wrong size." }
     if (-not $elf -or $elf.size -ne $linuxSize) { throw "Linux asset is missing or the wrong size." }
     Write-Output $view.url
 }

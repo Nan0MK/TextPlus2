@@ -65,6 +65,7 @@ public partial class MainWindow
     private string? _pendingSelect;
     private double _treeWidth = 220;
     private int _treeGeneration;
+    private int _driveLoad;
     private int _selectAttempts;
     private int _treeOpen;
     private bool _treeDrives;
@@ -311,10 +312,11 @@ public partial class MainWindow
     private void ShowDrives()
     {
         _treeGeneration++;
+        var generation = _treeGeneration;
+        var load = Interlocked.Increment(ref _driveLoad);
         _treeDrives = true;
         _treeDirectory = null;
         _pendingSelect = null;
-        SetTreeTitle("Drives", null);
         _roots.Clear();
 
         if (!OperatingSystem.IsWindows())
@@ -324,6 +326,14 @@ public partial class MainWindow
             return;
         }
 
+        // The window paints with an empty drive list. IsReady can stall on a
+        // spun-down disk, so the probe stays off the UI thread.
+        SetTreeTitle("Drives", null);
+        _ = Task.Run(() => LoadReadyDrives(generation, load));
+    }
+
+    private void LoadReadyDrives(int generation, int load)
+    {
         DriveInfo[] drives;
         try
         {
@@ -334,29 +344,54 @@ public partial class MainWindow
             drives = [];
         }
 
+        var ready = new List<string>();
         foreach (var drive in drives)
         {
+            if (Volatile.Read(ref _driveLoad) != load)
+                return;
+
             // IsReady on a network root can sit there. Skip those before asking.
             if (drive.DriveType is DriveType.Network or DriveType.NoRootDirectory)
                 continue;
+
             try
             {
                 if (!drive.IsReady)
                     continue;
+                var root = drive.RootDirectory.FullName;
+                if (!string.IsNullOrEmpty(root))
+                    ready.Add(root);
             }
             catch (Exception)
             {
                 continue;
             }
-
-            var root = drive.RootDirectory.FullName;
-            if (string.IsNullOrEmpty(root))
-                continue;
-            _roots.Add(new FileTreeNode(root, root, isDirectory: true));
         }
 
-        if (_roots.Count == 0)
-            _roots.Add(new FileTreeNode(@"C:\", @"C:\", isDirectory: true));
+        if (Volatile.Read(ref _driveLoad) != load)
+            return;
+
+        var roots = ready.Count > 0 ? ready.ToArray() : new[] { @"C:\" };
+        try
+        {
+            Dispatcher.UIThread.Post(
+                () => ApplyReadyDrives(generation, load, roots),
+                DispatcherPriority.Background);
+        }
+        catch (Exception)
+        {
+            // The dispatcher is already shut down.
+        }
+    }
+
+    private void ApplyReadyDrives(int generation, int load, string[] roots)
+    {
+        if (generation != _treeGeneration || load != Volatile.Read(ref _driveLoad) || !_treeDrives)
+            return;
+
+        _roots.Clear();
+        foreach (var root in roots)
+            _roots.Add(new FileTreeNode(root, root, isDirectory: true));
     }
 
     private void ShowDirectory(string directory, string? selectPath)

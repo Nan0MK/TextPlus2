@@ -26,7 +26,7 @@
       <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
     <Style Selector="Border.editor ae|TextEditor /template/ ScrollViewer#PART_ScrollViewer">
-      <Setter Property="Padding" Value="0,8,10,8"/>
+      <Setter Property="Padding" Value="8,14,10,8"/>
     </Style>
     <Style Selector="GridSplitter#FileTreeSplitter">
       <Setter Property="Background" Value="Transparent"/>

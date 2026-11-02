@@ -1,0 +1,19 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputName>TextPlus2</OutputName>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <!-- Double the slashes so the WiX preprocessor does not treat \t as a tab. -->
+    <ExePath>$([System.String]::Copy('$(PublishDir)\TextPlus2.exe').Replace('\', '\\'))</ExePath>
+    <DefineConstants>$(DefineConstants);MsiVersion=$(MsiVersion);ExePath=$(ExePath)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BindPath Include="$(PublishDir)" BindName="Publish" />
+  </ItemGroup>
+
+  <Target Name="CheckInstallerInputs" BeforeTargets="CoreCompile">
+    <Error
+      Text="Pass -p:PublishDir=path\to\win-x64 and -p:MsiVersion=26.1.0."
+      Condition="'$(PublishDir)' == '' or '$(MsiVersion)' == ''" />
+  </Target>
+</Project>

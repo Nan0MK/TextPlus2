@@ -9,6 +9,7 @@
 #   Version               26.1.0      (trailing .0 stripped)
 #   AssemblyVersion       26.1.0.0
 #   FileVersion           26.1.0.0
+#   MSI ProductVersion    26.1.0      (patch and revision share the third field)
 
 param(
     [Parameter(Position = 0)]
@@ -31,11 +32,16 @@ function Get-ReleaseNumbers([string]$informational) {
     if ($parts.Count -ne 4) { throw "Could not make a 4-part file version from '$informational'." }
     $assemblyVersion = $fileVersion
     $nugetVersion = if ($parts[3] -eq '0') { ($parts[0..2] -join '.') } else { $fileVersion }
+    # Windows Installer compares only three fields and ignores a fourth.
+    # 26_1.0.0 -> 26.1.0, 26_1.0.1 -> 26.1.1, 26_1.2.3 -> 26.1.2003.
+    $msiBuild = ([int]$parts[2] * 1000) + [int]$parts[3]
+    if ($msiBuild -gt 65535) { throw "MSI build number $msiBuild is above 65535." }
     return [PSCustomObject]@{
         Informational = $informational
         Version       = $nugetVersion
         Assembly      = $assemblyVersion
         File          = $fileVersion
+        Msi           = "$($parts[0]).$($parts[1]).$msiBuild"
     }
 }
 
@@ -69,20 +75,87 @@ if ($Version) { Set-ProjectVersions $numbers }
 
 $out = Join-Path $root "releases\$($numbers.Informational)"
 
-function Publish-Rid([string]$rid) {
-    $dest = Join-Path $out $rid
+function Publish-SelfContained([string]$rid, [string]$dest, [bool]$readyToRun) {
     if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
-    dotnet publish $project -c Release -r $rid --self-contained true `
-        -p:PublishSingleFile=true `
-        -p:IncludeNativeLibrariesForSelfExtract=true `
-        -p:DebugType=none `
-        -p:DebugSymbols=false `
-        -o $dest
+    $publishArgs = @(
+        "publish", $project, "-c", "Release", "-r", $rid, "--self-contained", "true",
+        "-p:DebugType=none", "-p:DebugSymbols=false",
+        "-p:IncludeSourceRevisionInInformationalVersion=false",
+        "-o", $dest, "--nologo"
+    )
+    if ($readyToRun) {
+        $publishArgs += @(
+            "-p:PublishSingleFile=false",
+            "-p:PublishReadyToRun=true",
+            "-p:PublishReadyToRunComposite=true"
+        )
+    }
+    else {
+        $publishArgs += @(
+            "-p:PublishSingleFile=true",
+            "-p:IncludeNativeLibrariesForSelfExtract=true"
+        )
+    }
+    & dotnet @publishArgs
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-Publish-Rid "win-x64"
-Publish-Rid "linux-x64"
+function Assert-Msi([string]$path, [string]$version) {
+    $installer = New-Object -ComObject WindowsInstaller.Installer
+    $db = $installer.OpenDatabase($path, 0)
+    $view = $db.OpenView("SELECT ``Value`` FROM ``Property`` WHERE ``Property``=?")
+    $record = $installer.CreateRecord(1)
+    $record.StringData(1) = "ProductName"
+    $view.Execute($record) | Out-Null
+    $row = $view.Fetch()
+    if (-not $row) { throw "MSI is missing ProductName." }
+    $product = $row.StringData(1).Trim()
+    $record.StringData(1) = "ProductVersion"
+    $view.Execute($record) | Out-Null
+    $row = $view.Fetch()
+    if (-not $row) { throw "MSI is missing ProductVersion." }
+    $productVersion = $row.StringData(1).Trim()
+    if ($product -ne "TextPlus2") { throw "MSI product name is '$product'." }
+    if ($productVersion -ne $version) { throw "MSI version is $productVersion, expected $version." }
+
+    $files = $db.OpenView("SELECT ``FileName`` FROM ``File``")
+    $files.Execute()
+    $names = @{}
+    while ($row = $files.Fetch()) {
+        $fileName = $row.StringData(1)
+        if ($fileName -match '\|(.+)$') { $fileName = $Matches[1] }
+        $names[$fileName] = $true
+    }
+    foreach ($need in @("TextPlus2.exe", "TextPlus2.r2r.dll", "libSkiaSharp.dll")) {
+        if (-not $names.ContainsKey($need)) { throw "MSI is missing $need." }
+    }
+}
+
+$winDir = Join-Path $out "win-x64"
+$msi = Join-Path $out "TextPlus2.msi"
+if (Test-Path $msi) { Remove-Item $msi -Force }
+Publish-SelfContained "win-x64" $winDir $true
+
+$msiStage = Join-Path $out "msi-build"
+if (Test-Path $msiStage) { Remove-Item $msiStage -Recurse -Force }
+# WiX incremental builds keep the previous ProductVersion and file set.
+foreach ($wixOut in @("obj", "bin")) {
+    $wixPath = Join-Path $root "installer\$wixOut"
+    if (Test-Path $wixPath) { Remove-Item $wixPath -Recurse -Force }
+}
+$publishDir = (Resolve-Path $winDir).Path
+& dotnet build (Join-Path $root "installer\TextPlus2.wixproj") -c Release -t:Rebuild --nologo `
+    -p:PublishDir="$publishDir" `
+    -p:MsiVersion="$($numbers.Msi)" `
+    -o $msiStage
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$stagedMsi = Join-Path $msiStage "TextPlus2.msi"
+if (-not (Test-Path $stagedMsi)) { throw "WiX did not write $stagedMsi." }
+Copy-Item $stagedMsi $msi -Force
+Remove-Item $msiStage -Recurse -Force
+Assert-Msi $msi $numbers.Msi
+
+Publish-SelfContained "linux-x64" (Join-Path $out "linux-x64") $false
 
 $win = Join-Path $out "win-x64\TextPlus2.exe"
 $linux = Join-Path $out "linux-x64\TextPlus2"
@@ -99,7 +172,7 @@ $notes = @"
 
 Self-contained builds. They do not need a separate .NET install.
 
-- ``win-x64/TextPlus2.exe`` runs on 64-bit Windows.
+- ``TextPlus2.msi`` installs TextPlus2 for 64-bit Windows. It does not need a separate .NET install.
 - ``linux-x64/TextPlus2`` runs on 64-bit Linux. Mark it executable if the file system did not: ``chmod +x TextPlus2``.
 
 Pass a file to open it, or a folder to root the file tree there.
@@ -110,5 +183,5 @@ $utf8 = New-Object System.Text.UTF8Encoding $false
 [IO.File]::WriteAllText((Join-Path $out "NOTES.md"), $notes.Replace("`r`n", "`n"), $utf8)
 
 Write-Output "Release written to $out"
-Write-Output "Windows $($winInfo.FileVersion) $($winInfo.ProductVersion) $((Get-Item $win).Length) bytes"
+Write-Output "Windows $($winInfo.FileVersion) $($winInfo.ProductVersion) MSI $((Get-Item $msi).Length) bytes"
 Write-Output "Linux ELF $((Get-Item $linux).Length) bytes"
