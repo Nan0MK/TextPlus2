@@ -4,11 +4,13 @@
     <InstallerPlatform>x64</InstallerPlatform>
     <!-- Double the slashes so the WiX preprocessor does not treat \t as a tab. -->
     <ExePath>$([System.String]::Copy('$(PublishDir)\TextPlus2.exe').Replace('\', '\\'))</ExePath>
-    <DefineConstants>$(DefineConstants);MsiVersion=$(MsiVersion);ExePath=$(ExePath)</DefineConstants>
+    <ConfigPath>$([System.String]::Copy('$(PublishDir)\TextPlus2.toml').Replace('\', '\\'))</ConfigPath>
+    <DefineConstants>$(DefineConstants);MsiVersion=$(MsiVersion);ExePath=$(ExePath);ConfigPath=$(ConfigPath)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <BindPath Include="$(PublishDir)" BindName="Publish" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
   </ItemGroup>
 
   <Target Name="CheckInstallerInputs" BeforeTargets="CoreCompile">

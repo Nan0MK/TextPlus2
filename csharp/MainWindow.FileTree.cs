@@ -102,6 +102,7 @@ public partial class MainWindow
         // A pointer click flips IsChecked before this runs. The Ctrl+B hotkey only raises Click.
         ApplyFileTreeVisible(!_fileTreeVisible);
         FileTreeMenuItem.IsChecked = _fileTreeVisible;
+        RememberOptions();
     }
 
     private void FollowOpenFile_Click(object? sender, RoutedEventArgs e)
@@ -111,6 +112,7 @@ public partial class MainWindow
         FollowOpenFileMenuItem.IsChecked = _followOpenFile;
         if (_followOpenFile)
             FollowDocument(TitlePath);
+        RememberOptions();
     }
 
     private void ApplyFileTreeVisible(bool visible)

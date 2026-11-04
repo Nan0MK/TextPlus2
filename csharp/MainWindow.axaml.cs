@@ -33,6 +33,9 @@ public partial class MainWindow : ChiselWindow
 
     private double _wheelAccum;
     private int _zoom = 100;
+    private string _theme = "system";
+    private string _editorFont = "jetbrains";
+    private bool _optionsReady;
     private bool _suppress;
     private bool _allowClose;
     private int _dialogSession;
@@ -50,10 +53,43 @@ public partial class MainWindow : ChiselWindow
             UpdateThemeButton();
             ApplyEditorTheme();
         };
-        SetZoom(100);
+        ApplySavedOptions();
         UpdateThemeButton();
         ApplyEditorTheme();
         InitFileTree();
+        _optionsReady = true;
+        if (AppConfig.Current.Warning != null)
+            SetStatus(AppConfig.Current.Warning);
+    }
+
+    private void ApplySavedOptions()
+    {
+        var config = AppConfig.Current;
+        _theme = config.Theme;
+        _editorFont = config.Font;
+        _followOpenFile = config.FollowOpenFile;
+        FollowOpenFileMenuItem.IsChecked = _followOpenFile;
+        SetWordWrap(config.WordWrap);
+        SetZoom(config.Zoom);
+        SelectFont(config.Font);
+        ApplyFileTreeVisible(config.FileTree);
+        FileTreeMenuItem.IsChecked = _fileTreeVisible;
+    }
+
+    private void RememberOptions()
+    {
+        if (!_optionsReady)
+            return;
+
+        var config = AppConfig.Current;
+        config.Theme = _theme;
+        config.Zoom = _zoom;
+        config.FileTree = _fileTreeVisible;
+        config.FollowOpenFile = _followOpenFile;
+        config.WordWrap = _wordWrap;
+        config.Font = _editorFont;
+        if (!config.Save())
+            SetStatus("Could not save settings");
     }
 
     private async void New_Click(object? sender, RoutedEventArgs e) => await NewDocumentAsync();
@@ -77,17 +113,28 @@ public partial class MainWindow : ChiselWindow
     private void ZoomIn_Click(object? sender, RoutedEventArgs e) => SetZoom(_zoom + ZoomStep);
     private void ZoomOut_Click(object? sender, RoutedEventArgs e) => SetZoom(_zoom - ZoomStep);
     private void ZoomReset_Click(object? sender, RoutedEventArgs e) => SetZoom(100);
-    private void Theme_Click(object? sender, RoutedEventArgs e) => ChiselTheme.ToggleTheme();
+    private void Theme_Click(object? sender, RoutedEventArgs e)
+    {
+        var next = ChiselTheme.ToggleTheme();
+        _theme = next == ThemeVariant.Light ? "light" : "dark";
+        RememberOptions();
+    }
 
     private bool _wordWrap;
 
     private void WordWrap_Click(object? sender, RoutedEventArgs e)
     {
         // A pointer click flips IsChecked before this runs. Assign the flag we own.
-        _wordWrap = !_wordWrap;
+        SetWordWrap(!_wordWrap);
+        FocusEditor();
+    }
+
+    private void SetWordWrap(bool wrap)
+    {
+        _wordWrap = wrap;
         WordWrapMenuItem.IsChecked = _wordWrap;
         Editor.WordWrap = _wordWrap;
-        FocusEditor();
+        RememberOptions();
     }
 
     private void FindBox_KeyDown(object? sender, KeyEventArgs e)
@@ -286,6 +333,7 @@ public partial class MainWindow : ChiselWindow
         Editor.FontSize = BaseFontSize * _zoom / 100.0;
         ApplyEditorFace();
         UpdateChrome();
+        RememberOptions();
     }
 
     private void OnPreviewKey(object? sender, KeyEventArgs e)

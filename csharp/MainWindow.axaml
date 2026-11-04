@@ -11,8 +11,10 @@
                 MinHeight="320"
                 Icon="avares://TextPlus2/Assets/TextPlus2Logo.ico">
   <c:ChiselWindow.Resources>
-    <!-- Static SemiBold. The bundled variable face ignores FontWeight, and a synthetic bold is blurrier. -->
+    <!-- One static file per face. FontWeight must match that file, or Avalonia synthesizes a blurrier weight. -->
     <FontFamily x:Key="EditorFont">avares://TextPlus2/Assets/Fonts#JetBrains Mono</FontFamily>
+    <FontFamily x:Key="EditorFontCascadia">avares://TextPlus2/Assets/Fonts#Cascadia Mono</FontFamily>
+    <FontFamily x:Key="EditorFontPlex">avares://TextPlus2/Assets/Fonts#IBM Plex Mono</FontFamily>
   </c:ChiselWindow.Resources>
   <c:ChiselWindow.IconContent>
     <Image Width="22" Height="22" Source="avares://TextPlus2/Assets/TextPlus2Logo.png"/>
@@ -23,7 +25,7 @@
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="{DynamicResource ChTextBrush}"/>
       <Setter Property="FontFamily" Value="{StaticResource EditorFont}"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="FontWeight" Value="Medium"/>
     </Style>
     <Style Selector="Border.editor ae|TextEditor /template/ ScrollViewer#PART_ScrollViewer">
       <Setter Property="Padding" Value="8,14,10,8"/>
@@ -89,6 +91,14 @@
             <Separator />
             <MenuItem Name="WordWrapMenuItem" Header="_Word Wrap" IsChecked="False" ToggleType="CheckBox"
                       Click="WordWrap_Click" AutomationProperties.Name="Word Wrap" />
+            <MenuItem Header="_Font" AutomationProperties.Name="Font">
+              <MenuItem Name="FontJetBrainsMenuItem" Header="_JetBrains Mono" IsChecked="True" ToggleType="Radio"
+                        Tag="jetbrains" Click="Font_Click" AutomationProperties.Name="JetBrains Mono" />
+              <MenuItem Name="FontCascadiaMenuItem" Header="_Cascadia Mono" IsChecked="False" ToggleType="Radio"
+                        Tag="cascadia" Click="Font_Click" AutomationProperties.Name="Cascadia Mono" />
+              <MenuItem Name="FontPlexMenuItem" Header="_IBM Plex Mono" IsChecked="False" ToggleType="Radio"
+                        Tag="plex" Click="Font_Click" AutomationProperties.Name="IBM Plex Mono" />
+            </MenuItem>
             <Separator />
             <MenuItem Name="ThemeMenuItem" Header="Switch to _Light" Click="Theme_Click" />
           </MenuItem>
@@ -158,7 +168,7 @@
                        WordWrap="False"
                        Focusable="True"
                        FontFamily="{StaticResource EditorFont}"
-                       FontWeight="SemiBold"
+                       FontWeight="Medium"
                        FontSize="15"
                        Background="Transparent"
                        Foreground="{DynamicResource ChTextBrush}"

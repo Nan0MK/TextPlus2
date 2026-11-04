@@ -1,0 +1,17 @@
+# TextPlus2 settings. This file is in the same folder as TextPlus2.
+# The View menu writes this file. You can edit it while TextPlus2 is closed.
+
+# system follows the operating system. light and dark stay on that theme.
+theme = "system"
+
+# 50 to 300.
+zoom = 100
+
+file_tree = true
+
+follow_open_file = false
+
+word_wrap = false
+
+# jetbrains, cascadia, or plex.
+font = "jetbrains"

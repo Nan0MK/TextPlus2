@@ -7,17 +7,21 @@
     <ApplicationTitle>TextPlus2</ApplicationTitle>
     <Product>TextPlus2</Product>
     <Description>A text editor.</Description>
-    <Version>26.1.1</Version>
-    <AssemblyVersion>26.1.1.0</AssemblyVersion>
-    <FileVersion>26.1.1.0</FileVersion>
-    <InformationalVersion>26_1.1.0</InformationalVersion>
+    <Version>26.1.2</Version>
+    <AssemblyVersion>26.1.2.0</AssemblyVersion>
+    <FileVersion>26.1.2.0</FileVersion>
+    <InformationalVersion>26_1.2.0</InformationalVersion>
     <ApplicationIcon>..\resources\TextPlus2Logo.ico</ApplicationIcon>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\Fonts\JetBrainsMono-SemiBold.ttf" />
+    <AvaloniaResource Include="Assets\Fonts\JetBrainsMono-Medium.ttf" />
+    <AvaloniaResource Include="Assets\Fonts\CascadiaMono-Regular.ttf" />
+    <AvaloniaResource Include="Assets\Fonts\IBMPlexMono-Medium.ttf" />
+    <Content Include="Assets\Fonts\OFL.txt" Link="OFL.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="TextPlus2.toml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
     <AvaloniaResource Include="..\resources\TextPlus2Logo.png" Link="Assets\TextPlus2Logo.png" />
     <AvaloniaResource Include="..\resources\TextPlus2Logo.ico" Link="Assets\TextPlus2Logo.ico" />
   </ItemGroup>
@@ -29,6 +33,7 @@
     <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.4.1" />
     <PackageReference Include="AvaloniaEdit.TextMate" Version="11.4.1" />
     <PackageReference Include="TextMateSharp.Grammars" Version="2.0.2" />
+    <PackageReference Include="Tomlyn" Version="2.10.1" />
     <ProjectReference Include="..\chiselui-avalonia\src\ChiselUI.Avalonia\ChiselUI.Avalonia.csproj" />
   </ItemGroup>
 </Project>

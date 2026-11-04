@@ -126,7 +126,7 @@ function Assert-Msi([string]$path, [string]$version) {
         if ($fileName -match '\|(.+)$') { $fileName = $Matches[1] }
         $names[$fileName] = $true
     }
-    foreach ($need in @("TextPlus2.exe", "TextPlus2.r2r.dll", "libSkiaSharp.dll")) {
+    foreach ($need in @("TextPlus2.exe", "TextPlus2.r2r.dll", "libSkiaSharp.dll", "TextPlus2.toml")) {
         if (-not $names.ContainsKey($need)) { throw "MSI is missing $need." }
     }
 }
@@ -166,18 +166,24 @@ if ($winInfo.FileVersion -ne $numbers.File -or $winInfo.ProductVersion -ne $numb
 $magic = [IO.File]::ReadAllBytes($linux)[0..3]
 $magicText = ($magic | ForEach-Object { '{0:X2}' -f $_ }) -join ' '
 if ($magicText -ne '7F 45 4C 46') { throw "Linux build is not an ELF file ($magicText)." }
+foreach ($config in @(
+    (Join-Path $out "win-x64\TextPlus2.toml"),
+    (Join-Path $out "linux-x64\TextPlus2.toml")
+)) {
+    if (-not (Test-Path $config)) { throw "Missing $config." }
+}
 
 $notes = @"
 # TextPlus2 $($numbers.Informational)
 
 Self-contained builds. They do not need a separate .NET install.
 
-- ``TextPlus2.msi`` installs TextPlus2 for 64-bit Windows. It does not need a separate .NET install.
+- ``TextPlus2.msi`` installs TextPlus2 for 64-bit Windows. It does not need a separate .NET install. The setup checkbox adds TextPlus2 to Open with and does not change the default app. A silent install does the same. Pass ``OPENWITH=0`` to skip it.
 - ``linux-x64/TextPlus2`` runs on 64-bit Linux. Mark it executable if the file system did not: ``chmod +x TextPlus2``.
 
 Pass a file to open it, or a folder to root the file tree there.
 
-This cut has New, Open, Open Folder, Save, Save As, Close, undo and redo, cut, copy, paste, select all, find, line numbers, zoom, light and dark, syntax highlighting, document tabs, a hideable file tree, word wrap, and the app icon. A click in the tree opens a file. Ctrl+Tab switches documents. Replace, language servers, and a rendered markdown preview are not in this release. Theme, zoom, the tree, follow-open-file, and word wrap last for the session only.
+This cut has New, Open, Open Folder, Save, Save As, Close, undo and redo, cut, copy, paste, select all, find, line numbers, zoom, light and dark, syntax highlighting, document tabs, a hideable file tree, word wrap, JetBrains Mono, Cascadia Mono, IBM Plex Mono, and the app icon. A click in the tree opens a file. Ctrl+Tab switches documents. Replace, language servers, and a rendered markdown preview are not in this release. Theme, zoom, the tree, follow-open-file, word wrap, and the editor font are stored in TextPlus2.toml next to the program.
 "@
 $utf8 = New-Object System.Text.UTF8Encoding $false
 [IO.File]::WriteAllText((Join-Path $out "NOTES.md"), $notes.Replace("`r`n", "`n"), $utf8)

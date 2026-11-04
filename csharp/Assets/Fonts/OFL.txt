@@ -1,4 +1,6 @@
 Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+Copyright 2021 Microsoft Corporation. All rights reserved. (Cascadia Mono, https://github.com/microsoft/cascadia-code)
+Copyright 2017 IBM Corp. All rights reserved. (IBM Plex Mono, https://github.com/IBM/plex)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

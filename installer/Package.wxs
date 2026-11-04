@@ -1,4 +1,5 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
   <!--
     UpgradeCode stays fixed so a newer MSI replaces this install.
     Windows Installer ignores a fourth version field, so the build number
@@ -22,6 +23,14 @@
     <Icon Id="TextPlus2.exe" SourceFile="..\resources\TextPlus2Logo.ico" />
     <Property Id="ARPPRODUCTICON" Value="TextPlus2.exe" />
 
+    <!--
+      Public and secure so the checkbox survives the jump to the elevated install.
+      An unchecked box clears the property. The Install button writes 0 before the
+      dialog closes, because a missing property would come back as this default.
+      OPENWITH=0 on a silent install skips the registration. The default app is untouched.
+    -->
+    <Property Id="OPENWITH" Value="1" Secure="yes" />
+
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="TextPlus2">
         <Component Id="AppExe" Guid="*">
@@ -35,18 +44,281 @@
             Icon="TextPlus2.exe"
             Advertise="yes" />
         </Component>
+        <!--
+          The upgrade removes the previous product before copying new files.
+          Permanent keeps this file through that removal. NeverOverwrite leaves
+          a copy the user has already changed. Users can write it. Administrators
+          and SYSTEM keep full control because these entries replace the file ACL.
+        -->
+        <Component Id="Settings" Guid="6F2C8A41-9B17-4E5D-A3C8-1D04E7B59A26" Permanent="yes" NeverOverwrite="yes">
+          <File Id="SettingsToml" Source="$(var.ConfigPath)" KeyPath="yes" Name="TextPlus2.toml">
+            <util:PermissionEx User="Administrators" GenericAll="yes" />
+            <util:PermissionEx User="SYSTEM" GenericAll="yes" />
+            <util:PermissionEx User="Users" GenericRead="yes" GenericWrite="yes" />
+          </File>
+        </Component>
+        <!-- Stable guid so an upgrade replaces this registration instead of orphaning it. -->
+        <Component Id="OpenWith" Guid="B7E2C4A1-9D58-4F63-8C20-6A1E5D93F047" Bitness="always64" Condition="OPENWITH = 1">
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\TextPlus2">
+            <RegistryValue Type="string" Value="TextPlus2 Document" KeyPath="yes" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\TextPlus2\DefaultIcon">
+            <RegistryValue Type="string" Value="[INSTALLFOLDER]TextPlus2.exe,0" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\TextPlus2\shell\open\command">
+            <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]TextPlus2.exe&quot; &quot;%1&quot;" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\Applications\TextPlus2.exe">
+            <RegistryValue Name="FriendlyAppName" Type="string" Value="TextPlus2" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\Applications\TextPlus2.exe\shell\open\command">
+            <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]TextPlus2.exe&quot; &quot;%1&quot;" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\Applications\TextPlus2.exe\SupportedTypes">
+            <RegistryValue Name=".txt" Type="string" Value="" />
+            <RegistryValue Name=".md" Type="string" Value="" />
+            <RegistryValue Name=".log" Type="string" Value="" />
+            <RegistryValue Name=".json" Type="string" Value="" />
+            <RegistryValue Name=".xml" Type="string" Value="" />
+            <RegistryValue Name=".csv" Type="string" Value="" />
+            <RegistryValue Name=".ini" Type="string" Value="" />
+            <RegistryValue Name=".yml" Type="string" Value="" />
+            <RegistryValue Name=".yaml" Type="string" Value="" />
+            <RegistryValue Name=".toml" Type="string" Value="" />
+            <RegistryValue Name=".cs" Type="string" Value="" />
+            <RegistryValue Name=".odin" Type="string" Value="" />
+            <RegistryValue Name=".ps1" Type="string" Value="" />
+            <RegistryValue Name=".py" Type="string" Value="" />
+            <RegistryValue Name=".js" Type="string" Value="" />
+            <RegistryValue Name=".ts" Type="string" Value="" />
+            <RegistryValue Name=".html" Type="string" Value="" />
+            <RegistryValue Name=".css" Type="string" Value="" />
+            <RegistryValue Name=".c" Type="string" Value="" />
+            <RegistryValue Name=".h" Type="string" Value="" />
+            <RegistryValue Name=".cpp" Type="string" Value="" />
+            <RegistryValue Name=".hpp" Type="string" Value="" />
+            <RegistryValue Name=".rs" Type="string" Value="" />
+            <RegistryValue Name=".go" Type="string" Value="" />
+            <RegistryValue Name=".java" Type="string" Value="" />
+            <RegistryValue Name=".sql" Type="string" Value="" />
+            <RegistryValue Name=".sh" Type="string" Value="" />
+            <RegistryValue Name=".bat" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\SystemFileAssociations\text\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.txt\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.md\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.log\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.json\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.xml\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.csv\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.ini\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.yml\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.yaml\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.toml\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.cs\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.odin\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.ps1\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.py\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.js\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.ts\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.html\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.css\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.c\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.h\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.cpp\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.hpp\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.rs\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.go\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.java\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.sql\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.sh\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\.bat\OpenWithProgids">
+            <RegistryValue Name="TextPlus2" Type="string" Value="" />
+          </RegistryKey>
+        </Component>
       </Directory>
     </StandardDirectory>
+
+    <UI>
+      <TextStyle Id="Tahoma8" FaceName="Tahoma" Size="8" />
+      <Property Id="DefaultUIFont" Value="Tahoma8" />
+      <Property Id="ErrorDialog" Value="ErrorDlg" />
+      <Binary Id="ErrorIcon" SourceFile="..\resources\TextPlus2Logo.ico" />
+
+      <Dialog Id="OpenWithDlg" Width="370" Height="270" Title="TextPlus2 Setup">
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="16" Transparent="yes" NoPrefix="yes" Text="TextPlus2" />
+        <Control Id="Description" Type="Text" X="20" Y="48" Width="330" Height="48" Transparent="yes" NoPrefix="yes" Text="TextPlus2 can appear in the Open with menu for text files. The default app for those files stays the same." />
+        <Control Id="OpenWithCheck" Type="CheckBox" X="20" Y="110" Width="330" Height="18" Property="OPENWITH" CheckBoxValue="1" Text="Show TextPlus2 in Open with" />
+        <Control Id="Install" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Install" ElevationShield="yes">
+          <Publish Property="OPENWITH" Value="1" Condition="OPENWITH" />
+          <Publish Property="OPENWITH" Value="0" Condition="NOT OPENWITH" />
+          <Publish Event="EndDialog" Value="Return" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="ProgressDlg" Width="370" Height="270" Title="TextPlus2 Setup" Modeless="yes">
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="16" Transparent="yes" NoPrefix="yes" Text="Installing TextPlus2" />
+        <Control Id="ActionText" Type="Text" X="20" Y="70" Width="330" Height="36">
+          <Subscribe Event="ActionText" Attribute="Text" />
+        </Control>
+        <Control Id="ProgressBar" Type="ProgressBar" X="20" Y="120" Width="330" Height="12" ProgressBlocks="yes">
+          <Subscribe Event="SetProgress" Attribute="Progress" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="ErrorDlg" Width="270" Height="105" Title="TextPlus2 Setup" ErrorDialog="yes">
+        <Control Id="ErrorText" Type="Text" X="48" Y="15" Width="205" Height="60" TabSkip="no" NoPrefix="yes" Text="Information text" />
+        <Control Id="ErrorIcon" Type="Icon" X="15" Y="15" Width="24" Height="24" ToolTip="Information icon" FixedSize="yes" IconSize="32" Text="ErrorIcon" />
+        <Control Id="Y" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="&amp;Yes">
+          <Publish Event="EndDialog" Value="ErrorYes" />
+        </Control>
+        <Control Id="A" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="&amp;Abort">
+          <Publish Event="EndDialog" Value="ErrorAbort" />
+        </Control>
+        <Control Id="C" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="&amp;Cancel">
+          <Publish Event="EndDialog" Value="ErrorCancel" />
+        </Control>
+        <Control Id="I" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="&amp;Ignore">
+          <Publish Event="EndDialog" Value="ErrorIgnore" />
+        </Control>
+        <Control Id="N" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="&amp;No">
+          <Publish Event="EndDialog" Value="ErrorNo" />
+        </Control>
+        <Control Id="O" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="OK">
+          <Publish Event="EndDialog" Value="ErrorOk" />
+        </Control>
+        <Control Id="R" Type="PushButton" X="100" Y="80" Width="56" Height="17" TabSkip="yes" Text="&amp;Retry">
+          <Publish Event="EndDialog" Value="ErrorRetry" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="FilesInUse" Width="370" Height="270" Title="TextPlus2 Setup" KeepModeless="yes">
+        <Control Id="Title" Type="Text" X="20" Y="15" Width="330" Height="16" Transparent="yes" NoPrefix="yes" Text="Files in use" />
+        <Control Id="Description" Type="Text" X="20" Y="40" Width="330" Height="32" Transparent="yes" NoPrefix="yes" Text="Some files that need to be updated are in use." />
+        <Control Id="List" Type="ListBox" X="20" Y="80" Width="330" Height="130" Property="FileInUseProcess" Sunken="yes" TabSkip="yes" />
+        <Control Id="Retry" Type="PushButton" X="164" Y="243" Width="56" Height="17" Text="&amp;Retry">
+          <Publish Event="EndDialog" Value="Retry" />
+        </Control>
+        <Control Id="Ignore" Type="PushButton" X="230" Y="243" Width="56" Height="17" Text="&amp;Ignore">
+          <Publish Event="EndDialog" Value="Ignore" />
+        </Control>
+        <Control Id="Exit" Type="PushButton" X="296" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="Exit">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="FatalError" Width="370" Height="270" Title="TextPlus2 Setup">
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="40" Transparent="yes" NoPrefix="yes" Text="TextPlus2 Setup Wizard ended prematurely" />
+        <Control Id="Description" Type="Text" X="20" Y="70" Width="330" Height="60" Transparent="yes" NoPrefix="yes" Text="The wizard was interrupted before TextPlus2 could be installed. Your system has not been modified." />
+        <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="Finish">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="UserExit" Width="370" Height="270" Title="TextPlus2 Setup">
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="40" Transparent="yes" NoPrefix="yes" Text="TextPlus2 Setup Wizard was interrupted" />
+        <Control Id="Description" Type="Text" X="20" Y="70" Width="330" Height="40" Transparent="yes" NoPrefix="yes" Text="The wizard was interrupted. TextPlus2 has not been installed." />
+        <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="Finish">
+          <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+      </Dialog>
+
+      <Dialog Id="ExitDialog" Width="370" Height="270" Title="TextPlus2 Setup">
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="40" Transparent="yes" NoPrefix="yes" Text="TextPlus2 Setup is complete" />
+        <Control Id="Description" Type="Text" X="20" Y="70" Width="330" Height="40" Transparent="yes" NoPrefix="yes" Text="TextPlus2 has been installed." />
+        <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="Finish">
+          <Publish Event="EndDialog" Value="Return" />
+        </Control>
+      </Dialog>
+
+      <InstallUISequence>
+        <Show Dialog="OpenWithDlg" Before="ProgressDlg" Condition="NOT Installed" />
+        <Show Dialog="ProgressDlg" Before="ExecuteAction" />
+        <Show Dialog="FatalError" OnExit="error" />
+        <Show Dialog="UserExit" OnExit="cancel" />
+        <Show Dialog="ExitDialog" OnExit="success" />
+      </InstallUISequence>
+      <AdminUISequence>
+        <Show Dialog="FatalError" OnExit="error" />
+        <Show Dialog="UserExit" OnExit="cancel" />
+        <Show Dialog="ExitDialog" OnExit="success" />
+      </AdminUISequence>
+    </UI>
 
     <Feature Id="Main">
       <ComponentGroupRef Id="AppFiles" />
       <ComponentRef Id="AppExe" />
+      <ComponentRef Id="Settings" />
+      <ComponentRef Id="OpenWith" />
     </Feature>
 
     <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
       <Files Include="!(bindpath.Publish)**">
         <Exclude Files="!(bindpath.Publish)**\*.pdb" />
         <Exclude Files="$(var.ExePath)" />
+        <Exclude Files="$(var.ConfigPath)" />
       </Files>
     </ComponentGroup>
   </Package>

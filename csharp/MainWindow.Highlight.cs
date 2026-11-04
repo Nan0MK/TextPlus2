@@ -96,38 +96,76 @@ public partial class MainWindow
             Editor.TextArea.CaretBrush = brush;
     }
 
+    private void Font_Click(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem item || item.Tag is not string key)
+            return;
+
+        // A pointer click flips IsChecked before this runs. The chosen face stays checked.
+        SelectFont(key);
+        FocusEditor();
+    }
+
+    private void SelectFont(string key)
+    {
+        if (key is not ("jetbrains" or "cascadia" or "plex"))
+            key = "jetbrains";
+        _editorFont = key;
+        ApplyEditorFont(key);
+        FontJetBrainsMenuItem.IsChecked = key == "jetbrains";
+        FontCascadiaMenuItem.IsChecked = key == "cascadia";
+        FontPlexMenuItem.IsChecked = key == "plex";
+        RememberOptions();
+    }
+
+    private void ApplyEditorFont(string key)
+    {
+        // Each resource is one static file. The weight is that file's OS/2 weight.
+        var (resource, weight) = key switch
+        {
+            "cascadia" => ("EditorFontCascadia", FontWeight.Normal),
+            "plex" => ("EditorFontPlex", FontWeight.Medium),
+            _ => ("EditorFont", FontWeight.Medium),
+        };
+        if (this.TryFindResource(resource, out var value) && value is FontFamily family)
+            Editor.FontFamily = family;
+        Editor.FontWeight = weight;
+        ApplyEditorFace();
+    }
+
     private void ApplyEditorFace()
     {
         var font = Editor.FontFamily;
+        var weight = Editor.FontWeight;
         var size = Editor.FontSize;
-        SetFace(Editor.TextArea.TextView, font, size);
+        SetFace(Editor.TextArea.TextView, font, weight, size);
         // The margin measures itself to the digits and draws them flush right. Padding is ignored.
-        var after = DigitWidth(font, size) * 2;
+        var after = DigitWidth(font, weight, size) * 2;
         var before = size * 0.3;
         foreach (var margin in Editor.TextArea.LeftMargins)
         {
-            SetFace(margin, font, size);
+            SetFace(margin, font, weight, size);
             if (margin is LineNumberMargin)
                 margin.Margin = new Thickness(before, 0, after, 0);
         }
     }
 
-    private static double DigitWidth(FontFamily font, double size)
+    private static double DigitWidth(FontFamily font, FontWeight weight, double size)
     {
         var text = new FormattedText(
             "0",
             CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
-            new Typeface(font, FontStyle.Normal, FontWeight.SemiBold),
+            new Typeface(font, FontStyle.Normal, weight),
             size,
             null);
         return text.Width;
     }
 
-    private static void SetFace(Control target, FontFamily font, double size)
+    private static void SetFace(Control target, FontFamily font, FontWeight weight, double size)
     {
         TextElement.SetFontFamily(target, font);
-        TextElement.SetFontWeight(target, FontWeight.SemiBold);
+        TextElement.SetFontWeight(target, weight);
         TextElement.SetFontSize(target, size);
     }
 
