@@ -1,0 +1,2 @@
+Choose install location (or else default) in installer.
+Update Graphical Style.
