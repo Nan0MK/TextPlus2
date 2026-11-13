@@ -23,6 +23,8 @@ The successor to [TextPlus](https://github.com/Nan0MK/TextPlus).
 
 ### Markdown
 
+Ctrl+click follows a link in the source. A heading link in the same file jumps to that heading. A path, or a `[[name]]` link, opens that file. A name with no extension opens the matching `.md` file.
+
 ![Guide.md in the light theme. Headings, emphasis, inline code, a C# fence, and a link are colored in the source.](docs/images/markdown-light.png)
 
 ### Find
@@ -47,6 +49,11 @@ A long line stays one line in the file. With word wrap on, line 3 folds inside t
 | Switch tab | Ctrl+Tab, Ctrl+Shift+Tab |
 | Find | Ctrl+F |
 | Find Next | F3 |
+| Follow link | Ctrl+click |
+| Previous word | Ctrl+Left |
+| Next word | Ctrl+Right |
+| Previous paragraph | Ctrl+Up |
+| Next paragraph | Ctrl+Down |
 | File tree | Ctrl+B |
 | Zoom | Ctrl+Plus, Ctrl+Minus, Ctrl+0, Ctrl+scroll |
 

@@ -45,6 +45,54 @@ function Get-ReleaseNumbers([string]$informational) {
     }
 }
 
+function Get-ReleaseNotes([string]$informational) {
+    # Each release lists only the features that version adds.
+    switch ($informational) {
+        "26_1.0.0" {
+            return @"
+# TextPlus2 26_1.0.0
+
+- New, Open, Save, Save As, Close, and Open Folder.
+- Undo, redo, cut, copy, paste, select all, and find.
+- Several files stay open in tabs.
+- A file tree. A click opens a file, and Follow Open File can retarget the tree.
+- Syntax highlighting, including Markdown colored in the source.
+- Line numbers, zoom, and word wrap.
+- Light and dark themes.
+- The app icon.
+"@
+        }
+        "26_1.1.0" {
+            return @"
+# TextPlus2 26_1.1.0
+
+- Windows installs from TextPlus2.msi, with a Start menu shortcut.
+- The drive list loads without blocking the window.
+"@
+        }
+        "26_1.2.0" {
+            return @"
+# TextPlus2 26_1.2.0
+
+- Theme, zoom, the file tree, Follow Open File, word wrap, and the editor font are saved.
+- Cascadia Mono and IBM Plex Mono can be chosen as the editor font.
+- Setup can add TextPlus2 to Open with. It does not change the default app.
+"@
+        }
+        "26_1.3.0" {
+            return @"
+# TextPlus2 26_1.3.0
+
+- Ctrl+click follows a Markdown link. A web address opens in the browser, a heading link jumps in the file, and a path opens that file. ``[[name]]`` opens the matching Markdown file.
+- Ctrl+Left and Ctrl+Right move by word. Ctrl+Up and Ctrl+Down move by paragraph. Left or Right with a selection moves to that end.
+- Setup asks for an install folder. The default is Program Files\TextPlus2, and a later install remembers the folder you chose.
+- Minimize, maximize, and close are yellow, green, and red. Menus, context menus, and flyouts have a drop shadow.
+"@
+        }
+        default { throw "Add release notes for $informational before building. Notes list only the features that version adds." }
+    }
+}
+
 function Read-ProjectInformational {
     $text = [IO.File]::ReadAllText($project)
     $m = [regex]::Match($text, '<InformationalVersion>([^<]*)</InformationalVersion>')
@@ -173,18 +221,7 @@ foreach ($config in @(
     if (-not (Test-Path $config)) { throw "Missing $config." }
 }
 
-$notes = @"
-# TextPlus2 $($numbers.Informational)
-
-Self-contained builds. They do not need a separate .NET install.
-
-- ``TextPlus2.msi`` installs TextPlus2 for 64-bit Windows. It does not need a separate .NET install. The setup checkbox adds TextPlus2 to Open with and does not change the default app. A silent install does the same. Pass ``OPENWITH=0`` to skip it.
-- ``linux-x64/TextPlus2`` runs on 64-bit Linux. Mark it executable if the file system did not: ``chmod +x TextPlus2``.
-
-Pass a file to open it, or a folder to root the file tree there.
-
-This cut has New, Open, Open Folder, Save, Save As, Close, undo and redo, cut, copy, paste, select all, find, line numbers, zoom, light and dark, syntax highlighting, document tabs, a hideable file tree, word wrap, JetBrains Mono, Cascadia Mono, IBM Plex Mono, and the app icon. A click in the tree opens a file. Ctrl+Tab switches documents. Replace, language servers, and a rendered markdown preview are not in this release. Theme, zoom, the tree, follow-open-file, word wrap, and the editor font are stored in TextPlus2.toml next to the program.
-"@
+$notes = Get-ReleaseNotes $numbers.Informational
 $utf8 = New-Object System.Text.UTF8Encoding $false
 [IO.File]::WriteAllText((Join-Path $out "NOTES.md"), $notes.Replace("`r`n", "`n"), $utf8)
 

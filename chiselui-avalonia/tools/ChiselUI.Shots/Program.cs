@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using ChiselUI.Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Logging;
@@ -70,6 +72,8 @@ static class Program
                 foreach (var name in new[] { "hero", "gallery", "buttons", "elevation" })
                     CropNamed(win, full, name, Path.Combine(outDir, $"zoom-{name}-{tag}.png"));
                 win.Height = 900; Pump(200);
+                scroller.Offset = default; Pump(150);
+                CaptionZoom(Path.Combine(outDir, $"zoom-captions-{tag}.png"));
 
                 // explorer page: icons, then details
                 win.ShowPage(true); Pump(400);
@@ -84,6 +88,7 @@ static class Program
                 var xw = new ExplorerWindow { Width = 1000, Height = 640 };
                 xw.Show(); Pump(400);
                 Capture(xw).Save(Path.Combine(outDir, $"explorer-window-{tag}.png"));
+                CaptionSheet(xw, Path.Combine(outDir, $"captions-window-1x-{tag}.png"));
                 xw.Close();
             }
             foreach (var a in accents)
@@ -152,6 +157,74 @@ static class Program
         using var sub = new SKBitmap();
         bmp.ExtractSubset(sub, new SKRectI(x, y, x + ww, y + hh));
         using var img = SKImage.FromBitmap(sub);
+        using var data = img.Encode(SKEncodedImageFormat.Png, 100);
+        File.WriteAllBytes(dest, data.ToArray());
+    }
+
+    /// <summary>True 2x zoom: an in-app GlassFrame rendered under a 2x LayoutTransform (vector-sharp, glows intact).</summary>
+    static void CaptionZoom(string dest, bool inactive = false)
+    {
+        var frame = new GlassFrame { Title = "ChiselUI", Width = 330, Height = 110, Margin = new Thickness(24), IsInactive = inactive,
+                                     Content = new Border { Height = 40 } };
+        var zw = new Window { Width = 2 * 378, Height = 2 * 158, Content = new LayoutTransformControl { LayoutTransform = new global::Avalonia.Media.ScaleTransform(2, 2), Child = frame } };
+        zw.Show(); Pump(300);
+        CaptionSheet(zw, dest, 2);
+        zw.Close();
+    }
+
+    /// <summary>Renders of the first caption group with min+max (normal / hover each / pressed close+max), as one sheet.</summary>
+    static void CaptionSheet(Window w, string dest, double zoom = 1)
+    {
+        var frame = w.GetVisualDescendants().OfType<GlassFrame>()
+            .FirstOrDefault(f => f.GetVisualDescendants().OfType<Button>().Any(b => b.Name == "PART_Maximize" && b.IsEffectivelyVisible));
+        if (frame == null) { Console.WriteLine("no caption frame in " + w.GetType().Name); return; }
+        var caps = frame.GetVisualDescendants().OfType<Control>().First(c => c.Name == "PART_Captions");
+        var btns = caps.GetVisualDescendants().OfType<Button>().Where(b => b.IsEffectivelyVisible).ToList();
+        var o = caps.TranslatePoint(new Point(0, 0), w)!.Value;
+        var e = caps.TranslatePoint(new Point(caps.Bounds.Width, caps.Bounds.Height), w)!.Value;
+        double scale = 1, z = zoom; double padL = 70 * z, padR = 14 * z, padT = 12 * z, padB = 14 * z;
+        var rect = new Rect(Math.Max(0, o.X - padL), Math.Max(0, o.Y - padT), 0, 0);
+        rect = rect.WithWidth(Math.Min(w.Bounds.Width - rect.X, e.X - rect.X + padR))
+                   .WithHeight(Math.Min(w.Bounds.Height - rect.Y, e.Y - rect.Y + padB));
+        var frames = new List<(string, SKBitmap)>();
+        void Grab(string label)
+        {
+            Pump(60);
+            // 96-dpi RenderTargetBitmap only: a DPI-scaled one drops blurred box shadows (glows) headless,
+            // so 2x zooms come from CaptionZoom (content under a 2x LayoutTransform).
+            using var rtb = new RenderTargetBitmap(new PixelSize((int)w.Bounds.Width, (int)w.Bounds.Height), new Vector(96, 96));
+            rtb.Render(w);
+            using var ms = new MemoryStream(); rtb.Save(ms); ms.Position = 0;
+            using var full = SKBitmap.Decode(ms);
+            var sub = new SKBitmap();
+            full.ExtractSubset(sub, new SKRectI((int)(rect.X * scale), (int)(rect.Y * scale), (int)(rect.Right * scale), (int)(rect.Bottom * scale)));
+            frames.Add((label, sub.Copy()));
+        }
+        Grab("normal");
+        foreach (var b in btns) { ((IPseudoClasses)b.Classes).Set(":pointerover", true); Grab("hover " + b.Name!.Replace("PART_", "")); ((IPseudoClasses)b.Classes).Set(":pointerover", false); }
+        foreach (var b in btns.AsEnumerable().Reverse().Take(2))
+        {
+            var pc = (IPseudoClasses)b.Classes; pc.Set(":pointerover", true); pc.Set(":pressed", true);
+            Grab("pressed " + b.Name!.Replace("PART_", "")); pc.Set(":pressed", false); pc.Set(":pointerover", false);
+        }
+        Pump(60);
+        bool dark = Application.Current!.ActualThemeVariant == ThemeVariant.Dark;
+        int fw = frames[0].Item2.Width, fh = frames[0].Item2.Height, lab = 28, rows = (frames.Count + 1) / 2;
+        using var sheet = new SKBitmap(fw * 2 + 30, (fh + lab) * rows + 10);
+        using (var cv = new SKCanvas(sheet))
+        {
+            cv.Clear(dark ? new SKColor(24, 24, 28) : new SKColor(246, 246, 248));
+            using var font = new SKFont(SKTypeface.Default, 13);
+            using var paint = new SKPaint { Color = dark ? new SKColor(220, 220, 220) : new SKColor(40, 40, 40), IsAntialias = true };
+            for (int i = 0; i < frames.Count; i++)
+            {
+                int cx = 10 + (i % 2) * (fw + 10), cy = 5 + (i / 2) * (fh + lab);
+                cv.DrawText(frames[i].Item1, cx, cy + 16, font, paint);
+                cv.DrawBitmap(frames[i].Item2, cx, cy + lab - 6);
+                frames[i].Item2.Dispose();
+            }
+        }
+        using var img = SKImage.FromBitmap(sheet);
         using var data = img.Encode(SKEncodedImageFormat.Png, 100);
         File.WriteAllBytes(dest, data.ToArray());
     }

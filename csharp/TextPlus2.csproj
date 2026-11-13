@@ -7,10 +7,10 @@
     <ApplicationTitle>TextPlus2</ApplicationTitle>
     <Product>TextPlus2</Product>
     <Description>A text editor.</Description>
-    <Version>26.1.2</Version>
-    <AssemblyVersion>26.1.2.0</AssemblyVersion>
-    <FileVersion>26.1.2.0</FileVersion>
-    <InformationalVersion>26_1.2.0</InformationalVersion>
+    <Version>26.1.3</Version>
+    <AssemblyVersion>26.1.3.0</AssemblyVersion>
+    <FileVersion>26.1.3.0</FileVersion>
+    <InformationalVersion>26_1.3.0</InformationalVersion>
     <ApplicationIcon>..\resources\TextPlus2Logo.ico</ApplicationIcon>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>

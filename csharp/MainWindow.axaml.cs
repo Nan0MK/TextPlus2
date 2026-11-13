@@ -45,6 +45,7 @@ public partial class MainWindow : ChiselWindow
     {
         InitializeComponent();
         InitHighlighting();
+        InitLinks();
         InitDocuments();
         AddHandler(PointerWheelChangedEvent, OnPreviewWheel, RoutingStrategies.Tunnel);
         AddHandler(KeyDownEvent, OnPreviewKey, RoutingStrategies.Tunnel);
@@ -153,6 +154,7 @@ public partial class MainWindow : ChiselWindow
 
     private void Editor_TextChanged(object? sender, EventArgs e)
     {
+        _linksDirty = true;
         if (_suppress || _current == null)
             return;
         _dirty = true;
@@ -338,8 +340,12 @@ public partial class MainWindow : ChiselWindow
 
     private void OnPreviewKey(object? sender, KeyEventArgs e)
     {
+        if (e.Handled)
+            return;
+        if (TryArrowNavigation(e))
+            return;
         // The editor takes Tab for itself. Catch Ctrl+Tab on the way down so it changes documents.
-        if (e.Handled || e.Key != Key.Tab || !e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Alt))
+        if (e.Key != Key.Tab || !e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Alt))
             return;
         CycleDocuments(e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? -1 : 1);
         e.Handled = true;

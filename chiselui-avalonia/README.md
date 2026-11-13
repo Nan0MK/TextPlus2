@@ -49,7 +49,7 @@ The publish uses ReadyToRun for faster startup. Native Skia/HarfBuzz are extract
 `ChiselWindow` uses `ExtendClientAreaToDecorationsHint` and draws its own chrome:
 - A 10px frosted frame with a 3px accent depth band and no outlines.
 - The content area lifted off the frame.
-- Gel min/max/close buttons, a draggable title bar, and resize grips on every edge.
+- ExyuTek caption buttons (yellow minimize, green maximize, red close glass slabs), a draggable title bar, and resize grips on every edge.
 
 It requests `AcrylicBlur → Mica → Blur`. If the OS refuses all three, it falls back to an opaque tinted frame. Properties:
 - `IconContent`
@@ -121,7 +121,7 @@ The token values are computed in `ChiselTokens.cs` with the same `color-mix` for
 - The colour system: surfaces, text, status colours and the 7 accents, with light/dark switching through ThemeVariant.
 - The elevation scale −1…5, using outer plus inset BoxShadows with the same offsets, blur and alpha.
 - Gel buttons and accent gels: gloss cap, bottom glow and edge ring. Concave dish wells, fields and the editor/console.
-- The frosted window frame: 10px frame, 3px accent depth band, no outlines, the content lift, and the gel caption buttons with the red close button.
+- The frosted window frame: 10px frame, 3px accent depth band, no outlines, the content lift, and the caption buttons: three glass slabs in the exact ExyuTek logo colours (`#ffee33` minimize, `#00ff99` maximize, `#ff0022` close) that pop out of the frame with the same 3px depth band and a coloured glow; hover lightens, pressed sinks (band collapses, face darkens). Tokens: `ChCaptionMin/Max/Close` (+ `Side`, `Glyph`, `FaceBrush`, `HoverFaceBrush`, `PressedFaceBrush`, `Shadow`, `HoverShadow`, `PressedShadow`). Faces are slightly transparent (`faceAlpha = .80`, hover `.86`, depth band `sideAlpha = .88`, matching the web `--caption-*-alpha` tokens); Avalonia has no backdrop blur, so the frame simply shows through. To re-skin, change the three colours in `ChiselTokens.cs`.
 - The tabs (document tabs and property sheets), segmented controls, toolbars and status cells.
 - The menus/popups at elevation 5, the tooltip and the scrollbars (sunken track with a gel thumb).
 - The DataGrid (header and banding), the tree, badges and alerts.

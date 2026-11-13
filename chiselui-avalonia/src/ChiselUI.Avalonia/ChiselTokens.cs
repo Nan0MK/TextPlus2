@@ -335,15 +335,38 @@ public sealed class ChiselTokens
         Put("ChScrollTrackHShadow", Sh(I(0, 1, 2, 0, neoDark)));
         Put("ChScrollThumbHoverBrush", H((0, Over(Wht(.40), acc)), (.5, Over(Wht(.08), acc)), (1, Over(Blk(.06), acc))));
 
-        // ---- caption capsule (Vista/7 joined, red gel close) -------------------------------------
-        Put("ChCaptionBrush", GelOver(Wht(.20), Wht(.04)));
-        Put("ChCaptionHoverBrush", GelOver(Over(Wht(.30), Rgba(80, 150, 230, .10)), Rgba(80, 150, 230, .35), glow: Rgba(160, 220, 255, .9)));
-        Put("ChCloseBrush", GelOver(Hex("#e0574a"), Hex("#a8231a"), glow: Hex("#ff9a7a")));
-        Put("ChCloseHoverBrush", GelOver(Hex("#f06a5c"), Hex("#c02a20"), glow: Hex("#ffc0a0")));
-        Put("ChCaptionShadow", Sh(I(0, 0, 0, 1, Wht(.28))));
-        Put("ChCaptionSepShadow", Sh(I(0, 0, 0, 1, Wht(.28)), S(-1, 0, 0, 0, Blk(.25))));
-        Put("ChCloseHoverShadow", Sh(I(0, 0, 0, 1, Wht(.28)), S(0, 0, 12, 0, Hex("#ff6a50"))));
-        Put("ChCaptionGroupShadow", Sh(S(0, 0, 0, 1, Blk(.30)), S(0, 1, 0, 0, Wht(.35))));
+        // ---- caption buttons (ExyuTek): glass slabs that pop out of the frame ------------------------
+        // Faces are the exact logo colours (opaque, so the frame never tints them) with a soft top
+        // sheen; no outlines; a solid darker depth band (same hue, darkened) like the frame's 3px band;
+        // a coloured glow. Hover lightens and pressed darkens the same hue. Mirrors --caption-* (web).
+        {
+            double glowA = dk ? .45 : .55, sheen = dk ? .24 : .30;
+        // r9: slightly transparent glass faces (web: --caption-face-alpha / --caption-face-hover-alpha / --caption-side-alpha)
+        double faceAlpha = .80, hoverAlpha = .86, sideAlpha = .88;
+            void Cap(string n, Color c, double sideP, Color glyph)
+            {
+                var side = WithAlpha(Mix(c, sideP, black), sideAlpha);
+                Col("Caption" + n, c);
+                Col("Caption" + n + "Side", side);
+                Col("Caption" + n + "Glyph", glyph);
+                IBrush Face(Color top, Color bottom, double sh, double dim = 0)
+                {
+                    Color F(double t) { var f = Lerp(top, bottom, t); return dim > 0 ? Over(Blk(dim - (dim - .04) * t), f) : f; }
+                    double W(double t) => sh * System.Math.Max(0, 1 - t / .6);
+                    return V((0, Over(Wht(W(0)), F(0))), (.3, Over(Wht(W(.3)), F(.3))), (.6, F(.6)), (1, F(1)));
+                }
+                Put("ChCaption" + n + "FaceBrush", Face(WithAlpha(c, faceAlpha), WithAlpha(c, faceAlpha), sheen));
+                Put("ChCaption" + n + "HoverFaceBrush", Face(WithAlpha(Mix(c, .70, white), hoverAlpha), WithAlpha(Mix(c, .92, white), hoverAlpha), sheen));
+                Put("ChCaption" + n + "PressedFaceBrush", Face(WithAlpha(c, faceAlpha), WithAlpha(c, faceAlpha), 0, .14));
+                Put("ChCaption" + n + "Shadow", Sh(S(0, 3, 0, 0, side), S(0, 6, 10, -2, WithAlpha(c, glowA)), S(0, 4, 3, 0, Blk(.22))));
+                Put("ChCaption" + n + "HoverShadow", Sh(S(0, 3, 0, 0, side), S(0, 6, 14, 0, WithAlpha(c, glowA + .2)), S(0, 4, 3, 0, Blk(.22))));
+                Put("ChCaption" + n + "PressedShadow", Sh(S(0, 1, 0, 0, side), S(0, 2, 6, -2, WithAlpha(c, glowA))));
+            }
+            Color cMin = Hex("#ffee33"), cMax = Hex("#00ff99"), cClose = Hex("#ff0022");   // exact logo colours
+            Cap("Min", cMin, .62, Mix(cMin, .24, black));
+            Cap("Max", cMax, .58, Mix(cMax, .24, black));
+            Cap("Close", cClose, .60, white);
+        }
         // real window chrome: the 3px depth band is drawn inside the window bottom; top wash line
         Put("ChWindowChromeShadow", Sh(I(0, -3, 0, 0, glassSide), I(0, 1, 0, 0, Wht(dk ? .10 : .45))));
 

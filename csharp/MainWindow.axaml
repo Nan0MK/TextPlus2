@@ -176,6 +176,7 @@
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch">
           <ae:TextEditor.Options>
+            <!-- Links are underlined by MarkdownLinkColorizer. AvaloniaEdit hyperlinks stay off. -->
             <ae:TextEditorOptions HighlightCurrentLine="False" EnableHyperlinks="False"/>
           </ae:TextEditor.Options>
         </ae:TextEditor>
